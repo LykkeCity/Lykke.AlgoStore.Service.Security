@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="6.2.2" />
     <PackageReference Include="Lykke.Common.ApiLibrary" Version="1.4.0" />
     <PackageReference Include="Lykke.Logs" Version="3.6.2" />
     <PackageReference Include="Lykke.Service.Session" Version="1.0.33" />
@@ -45,6 +46,10 @@
     <ProjectReference Include="..\Lykke.AlgoStore.Service.Security.AzureRepositories\Lykke.AlgoStore.Service.Security.AzureRepositories.csproj" />
     <ProjectReference Include="..\Lykke.AlgoStore.Service.Security.Core\Lykke.AlgoStore.Service.Security.Core.csproj" />
     <ProjectReference Include="..\Lykke.AlgoStore.Service.Security.Services\Lykke.AlgoStore.Service.Security.Services.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">

@@ -15,4 +15,10 @@
     <ProjectReference Include="..\Lykke.AlgoStore.Service.Security.Core\Lykke.AlgoStore.Service.Security.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\" />
+    <Folder Include="Mappers\" />
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+
 </Project>
