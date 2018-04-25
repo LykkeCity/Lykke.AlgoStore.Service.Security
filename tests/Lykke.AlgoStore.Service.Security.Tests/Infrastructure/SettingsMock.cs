@@ -6,8 +6,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Infrastructure
 {
     public static class SettingsMock
     {
-        private const string TableConnectionString = "UseDevelopmentStorage=true";
-        private const string LogsConnectionString = "UseDevelopmentStorage=true";
+        private const string LocalStorageConnectionString = "UseDevelopmentStorage=true";
 
         public static IReloadingManager<string> GetTableStorageConnectionString()
         {
@@ -16,7 +15,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Infrastructure
             var mock = new Mock<IReloadingManager<string>>();
 
             mock.Setup(x => x.Reload())
-                .Returns(() => currentTask = Task.FromResult(TableConnectionString));
+                .Returns(() => currentTask = Task.FromResult(LocalStorageConnectionString));
 
             mock.Setup(x => x.CurrentValue)
                 .Returns(() => (currentTask ?? mock.Object.Reload()).Result);
@@ -31,7 +30,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Infrastructure
             var mock = new Mock<IReloadingManager<string>>();
 
             mock.Setup(x => x.Reload())
-                .Returns(() => currentTask = Task.FromResult(LogsConnectionString));
+                .Returns(() => currentTask = Task.FromResult(LocalStorageConnectionString));
 
             mock.Setup(x => x.CurrentValue)
                 .Returns(() => (currentTask ?? mock.Object.Reload()).Result);
