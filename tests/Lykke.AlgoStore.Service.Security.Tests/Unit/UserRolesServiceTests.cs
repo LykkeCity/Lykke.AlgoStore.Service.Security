@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
+using Lykke.AlgoStore.Service.Security.Core.Domain;
+using Lykke.AlgoStore.Service.Security.Core.Repositories;
+using Lykke.AlgoStore.Service.Security.Core.Services;
+using Lykke.AlgoStore.Service.Security.Services;
+using Lykke.AlgoStore.Service.Security.Tests.Infrastructure;
+using Lykke.Service.PersonalData.Contract;
 using Moq;
 using NUnit.Framework;
 

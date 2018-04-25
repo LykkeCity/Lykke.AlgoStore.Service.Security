@@ -1,5 +1,10 @@
 ﻿using System.Collections.Generic;
 using AutoFixture;
+using AzureStorage.Tables;
+using Lykke.AlgoStore.Service.Security.AzureRepositories.Entities;
+using Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories;
+using Lykke.AlgoStore.Service.Security.Core.Domain;
+using Lykke.AlgoStore.Service.Security.Tests.Infrastructure;
 using NUnit.Framework;
 
 namespace Lykke.AlgoStore.Service.Security.Tests.Unit
