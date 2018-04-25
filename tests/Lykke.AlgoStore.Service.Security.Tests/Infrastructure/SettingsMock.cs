@@ -25,17 +25,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Infrastructure
 
         public static IReloadingManager<string> GetLogsConnectionString()
         {
-            Task<string> currentTask = null;
-
-            var mock = new Mock<IReloadingManager<string>>();
-
-            mock.Setup(x => x.Reload())
-                .Returns(() => currentTask = Task.FromResult(LocalStorageConnectionString));
-
-            mock.Setup(x => x.CurrentValue)
-                .Returns(() => (currentTask ?? mock.Object.Reload()).Result);
-
-            return mock.Object;
+            return GetTableStorageConnectionString();
         }
     }
 }
