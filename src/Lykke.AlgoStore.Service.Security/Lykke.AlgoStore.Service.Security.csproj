@@ -47,10 +47,6 @@
     <ProjectReference Include="..\Lykke.AlgoStore.Service.Security.Core\Lykke.AlgoStore.Service.Security.Core.csproj" />
     <ProjectReference Include="..\Lykke.AlgoStore.Service.Security.Services\Lykke.AlgoStore.Service.Security.Services.csproj" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
     <ItemGroup>

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using Lykke.AlgoStore.Service.Security.Core.Domain;
 
-namespace Lykke.AlgoStore.Service.Security.Core.Services
+namespace Lykke.AlgoStore.Service.Security.Core.Domain
 {
     public class AlgoStoreUserData
     {

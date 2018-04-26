@@ -9,7 +9,7 @@ namespace Lykke.AlgoStore.Service.Security.AzureRepositories.Mappers
     {
         public static UserRoleMatchData ToModel(this UserRoleMatchEntity entity)
         {
-            var result = new UserRoleMatchData()
+            var result = new UserRoleMatchData
             {
                 ClientId = entity.PartitionKey,
                 RoleId = entity.RowKey
@@ -20,7 +20,7 @@ namespace Lykke.AlgoStore.Service.Security.AzureRepositories.Mappers
 
         public static List<UserRoleMatchData> ToModel(this IEnumerable<UserRoleMatchEntity> entities)
         {
-            return entities.Select(entity => new UserRoleMatchData()
+            return entities.Select(entity => new UserRoleMatchData
             {
                 ClientId = entity.PartitionKey,
                 RoleId = entity.RowKey
@@ -29,7 +29,7 @@ namespace Lykke.AlgoStore.Service.Security.AzureRepositories.Mappers
 
         public static UserRoleMatchEntity ToEntity(this UserRoleMatchData data)
         {
-            var result = new UserRoleMatchEntity()
+            var result = new UserRoleMatchEntity
             {
                 PartitionKey = data.ClientId,
                 RowKey = data.RoleId,

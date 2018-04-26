@@ -69,6 +69,18 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
             return Ok(result);
         }
 
+        [HttpPost("updateRole")]
+        [SwaggerOperation("SaveUserRole")]
+        [ProducesResponseType(typeof(UserRoleModel), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> UpdateUserRole([FromBody] UserRoleUpdateModel role)
+        {
+            var data = AutoMapper.Mapper.Map<UserRoleData>(role);
+
+            var result = await _userRolesService.SaveRoleAsync(data);
+
+            return Ok(result);
+        }
+
         [HttpPost("assignRole")]
         [SwaggerOperation("AssignUserRole")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]

@@ -146,11 +146,24 @@ namespace Lykke.AlgoStore.Service.Security.Services
             if (string.IsNullOrEmpty(data.RoleId))
                 throw new Exception("RoleId is empty.");
 
+            var role = await _rolesRepository.GetRoleByIdAsync(data.RoleId);
+
+            if (role == null)
+                throw new Exception($"Role with id {data.RoleId} does not exist.");
+
+            var clientData = await _personalDataService.GetAsync(data.ClientId);
+
+            if (clientData == null)
+                throw new Exception($"Client with id {data.ClientId} does not exist.");
+
             await _userRoleMatchRepository.SaveUserRoleAsync(data);
         }
 
         public async Task<UserRoleData> SaveRoleAsync(UserRoleData role)
         {
+            if (!String.IsNullOrEmpty(role.Name) && await _rolesRepository.RoleExistsAsync(role.Name))
+                throw new Exception($"Role {role.Name} already exists.");
+
             if (role.Id == null)
             {
                 role.Id = Guid.NewGuid().ToString();
@@ -164,6 +177,9 @@ namespace Lykke.AlgoStore.Service.Security.Services
                 {
                     throw new Exception("This role can't be modified.");
                 }
+
+                // because the RK is the role name, in order to update it, first delete the old role and then replace it with the new one
+                await _rolesRepository.DeleteRoleAsync(dbRole);
             }
 
             await _rolesRepository.SaveRoleAsync(role);
@@ -212,6 +228,11 @@ namespace Lykke.AlgoStore.Service.Security.Services
             if (string.IsNullOrEmpty(roleId))
                 throw new Exception("RoleId is empty.");
 
+            var role = await _rolesRepository.GetRoleByIdAsync(roleId);
+
+            if (role == null)
+                throw new Exception($"Role with id {roleId} does not exist.");
+
             //first check if the role has permissions assigned
             var permissionsForRole = await _rolePermissionMatchRepository.GetPermissionIdsByRoleIdAsync(roleId);
             foreach (var permissionForRole in permissionsForRole)
@@ -220,7 +241,18 @@ namespace Lykke.AlgoStore.Service.Security.Services
                 await _rolePermissionMatchRepository.RevokePermission(permissionForRole);
             }
 
-            var role = await _rolesRepository.GetRoleByIdAsync(roleId);
+            //then check if any user is assigned to this role
+            var allMatches = await _userRoleMatchRepository.GetAllMatchesAsync();
+            var usersWithRole = allMatches.Where(m => m.RoleId == roleId).ToList();
+
+            if (usersWithRole.Count > 0)
+            {
+                // it there are any, revoke it
+                foreach (var match in usersWithRole)
+                {
+                    await _userRoleMatchRepository.RevokeUserRole(match.ClientId, match.RoleId);
+                }
+            }
 
             if (!role.CanBeDeleted)
                 throw new Exception("This role cannot be deleted.");

@@ -45,19 +45,9 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
             Then_Result_ShouldHavePermissions(result);
         }
 
-        [Test]
-        public void AssignRoleToUserTest()
-        {
-            When_Invoke_AssignRoleToUser();
-
-            var result = When_Invoke_GetByClientId();
-            Then_Result_ShouldNotBeEmpty(result);
-            Then_Result_ShouldHavePermissions(result);
-        }
-
         private void When_Invoke_AssignRoleToUser()
         {
-            var roleMatchData = new UserRoleMatchData()
+            var roleMatchData = new UserRoleMatchData
             {
                 RoleId = _roleId,
                 ClientId = _clientId

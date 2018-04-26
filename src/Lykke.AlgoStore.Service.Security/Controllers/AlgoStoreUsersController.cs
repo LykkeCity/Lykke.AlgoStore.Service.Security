@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Services;
 using Lykke.Common.Api.Contract.Responses;
 using Microsoft.AspNetCore.Mvc;

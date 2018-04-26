@@ -27,22 +27,6 @@ namespace Lykke.AlgoStore.Service.Security.Services
             _log = log;
         }
 
-        public async Task AssignPermissionToRoleAsync(RolePermissionMatchData data)
-        {
-            if (string.IsNullOrEmpty(data.PermissionId))
-                throw new Exception("PermissionId is empty.");
-
-            if (string.IsNullOrEmpty(data.RoleId))
-                throw new Exception("RoleId is empty.");
-
-            var role = await _rolesRepository.GetRoleByIdAsync(data.RoleId);
-
-            if (!role.CanBeModified)
-                throw new Exception("The permissions of this role cannot be modified.");
-
-            await _rolePermissionMatchRepository.AssignPermissionToRoleAsync(data);
-        }
-
         public async Task AssignPermissionsToRoleAsync(List<RolePermissionMatchData> data)
         {
             foreach (var permission in data)
@@ -53,7 +37,15 @@ namespace Lykke.AlgoStore.Service.Security.Services
                 if (string.IsNullOrEmpty(permission.RoleId))
                     throw new Exception("RoleId is empty.");
 
+                var dbPermission = await _permissionsRepository.GetPermissionByIdAsync(permission.PermissionId);
+
+                if (dbPermission == null)
+                    throw new Exception($"Permission with id {permission.PermissionId} does not exist.");
+
                 var role = await _rolesRepository.GetRoleByIdAsync(permission.RoleId);
+
+                if (role == null)
+                    throw new Exception($"Role with id {permission.RoleId} does not exist.");
 
                 if (!role.CanBeModified)
                     throw new Exception("The permissions of this role cannot be modified.");
@@ -117,22 +109,6 @@ namespace Lykke.AlgoStore.Service.Security.Services
                 throw new Exception("Permission with this ID does not exist");
 
             await _permissionsRepository.DeletePermissionAsync(permission);
-        }
-
-        public async Task RevokePermissionFromRole(RolePermissionMatchData data)
-        {
-            if (string.IsNullOrEmpty(data.RoleId))
-                throw new Exception("RoleId is empty.");
-
-            if (string.IsNullOrEmpty(data.PermissionId))
-                throw new Exception("PermissionId is empty.");
-
-            var role = await _rolesRepository.GetRoleByIdAsync(data.RoleId);
-
-            if (!role.CanBeModified)
-                throw new Exception("The permissions of this role cannot be modified.");
-
-            await _rolePermissionMatchRepository.RevokePermission(data);
         }
 
         public async Task RevokePermissionsFromRole(List<RolePermissionMatchData> data)
