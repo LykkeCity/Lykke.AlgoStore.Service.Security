@@ -161,11 +161,16 @@ namespace Lykke.AlgoStore.Service.Security.Services
 
         public async Task<UserRoleData> SaveRoleAsync(UserRoleData role)
         {
-            if (!String.IsNullOrEmpty(role.Name) && await _rolesRepository.RoleExistsAsync(role.Name))
-                throw new Exception($"Role {role.Name} already exists.");
-
             if (role.Id == null)
             {
+                if (String.IsNullOrEmpty(role.Name))
+                    throw new Exception("Role name is required.");
+
+                if (await _rolesRepository.RoleExistsAsync(role.Name))
+                {
+                    throw new Exception($"Role {role.Name} already exists.");
+                }
+
                 role.Id = Guid.NewGuid().ToString();
                 role.CanBeModified = true;
                 role.CanBeDeleted = true;
