@@ -8,11 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lykke.AzureStorage" Version="8.2.0" />
+    <PackageReference Include="Lykke.AzureStorage" Version="8.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Lykke.AlgoStore.Service.Security.Core\Lykke.AlgoStore.Service.Security.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Entities\" />
+    <Folder Include="Mappers\" />
+    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>
