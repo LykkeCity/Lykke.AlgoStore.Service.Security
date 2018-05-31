@@ -7,7 +7,6 @@ using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Repositories;
 using Lykke.AlgoStore.Service.Security.Core.Services;
 using Lykke.AlgoStore.Service.Security.Services;
-using Lykke.AlgoStore.Service.Security.Tests.Infrastructure;
 using Lykke.Service.PersonalData.Contract;
 using Moq;
 using NUnit.Framework;
@@ -182,7 +181,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
             var rolePermissionMatchRepository = Given_Correct_RolePermissionMatchRepository();
             var personalDataService = Given_Correct_PersonalDataservice();
             return new UserRolesService(userRolesRepository, userPermissionsRepository, userRoleMatchRepository,
-                rolePermissionMatchRepository, personalDataService, new LogMock());
+                rolePermissionMatchRepository, personalDataService);
         }
 
         public static IUserPermissionsService Given_Correct_PermissionsService()
@@ -191,7 +190,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
             var rolePermissionMatchRepository = Given_Correct_RolePermissionMatchRepository();
             var userRolesRepository = Given_Correct_UserRolesRepository();
             return new UserPermissionsService(userPermissionsRepository, rolePermissionMatchRepository,
-                userRolesRepository, new LogMock());
+                userRolesRepository);
         }
 
         public static IPersonalDataService Given_Correct_PersonalDataservice()

@@ -6,7 +6,6 @@ using AutoFixture;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Repositories;
 using Lykke.AlgoStore.Service.Security.Services;
-using Lykke.AlgoStore.Service.Security.Tests.Infrastructure;
 using Moq;
 using NUnit.Framework;
 
@@ -60,8 +59,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
             var userPermissionsRepository = Given_Correct_UserPermissionsRepository();
             var rolePermissionMatchRepository = Given_Correct_RolePermissionMatchRepository();
             var rolesRepository = Given_Correct_UserRolesRepository();
-            return new UserPermissionsService(userPermissionsRepository, rolePermissionMatchRepository, rolesRepository,
-                new LogMock());
+            return new UserPermissionsService(userPermissionsRepository, rolePermissionMatchRepository, rolesRepository);
         }
 
         public static IUserRolesRepository Given_Correct_UserRolesRepository()
