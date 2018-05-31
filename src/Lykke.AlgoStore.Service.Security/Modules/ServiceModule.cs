@@ -46,7 +46,13 @@ namespace Lykke.AlgoStore.Service.Security.Modules
             builder.RegisterType<ShutdownManager>()
                 .As<IShutdownManager>();
 
-            // TODO: Add your dependencies here
+            builder.RegisterType<UserRolesService>()
+                .As<IUserRolesService>()
+                .SingleInstance();
+
+            builder.RegisterType<UserPermissionsService>()
+                .As<IUserPermissionsService>()
+                .SingleInstance();
 
             builder.Populate(_services);
         }
