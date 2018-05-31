@@ -6,6 +6,7 @@ using Common.Log;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Repositories;
 using Lykke.AlgoStore.Service.Security.Core.Services;
+using Lykke.AlgoStore.Service.Security.Services.Strings;
 
 namespace Lykke.AlgoStore.Service.Security.Services
 {
@@ -32,23 +33,23 @@ namespace Lykke.AlgoStore.Service.Security.Services
             foreach (var permission in data)
             {
                 if (string.IsNullOrEmpty(permission.PermissionId))
-                    throw new Exception("PermissionId is empty.");
+                    throw new Exception(Phrases.PermissionIdEmpty);
 
                 if (string.IsNullOrEmpty(permission.RoleId))
-                    throw new Exception("RoleId is empty.");
+                    throw new Exception(Phrases.RoleIdEmpty);
 
                 var dbPermission = await _permissionsRepository.GetPermissionByIdAsync(permission.PermissionId);
 
                 if (dbPermission == null)
-                    throw new Exception($"Permission with id {permission.PermissionId} does not exist.");
+                    throw new Exception(string.Format(Phrases.PermissionDoesNotExist, permission.PermissionId));
 
                 var role = await _rolesRepository.GetRoleByIdAsync(permission.RoleId);
 
                 if (role == null)
-                    throw new Exception($"Role with id {permission.RoleId} does not exist.");
+                    throw new Exception(string.Format(Phrases.RoleDoesNotExist, permission.RoleId));
 
                 if (!role.CanBeModified)
-                    throw new Exception("The permissions of this role cannot be modified.");
+                    throw new Exception(Phrases.PermissionsAreImmutable);
 
                 await _rolePermissionMatchRepository.AssignPermissionToRoleAsync(permission);
             }
@@ -63,7 +64,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
         public async Task<UserPermissionData> GetPermissionByIdAsync(string permissionId)
         {
             if (string.IsNullOrEmpty(permissionId))
-                throw new Exception("PermissionId is empty.");
+                throw new Exception(Phrases.PermissionIdEmpty);
 
             var result = await _permissionsRepository.GetPermissionByIdAsync(permissionId);
             return result;
@@ -72,7 +73,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
         public async Task<List<UserPermissionData>> GetPermissionsByRoleIdAsync(string roleId)
         {
             if (string.IsNullOrEmpty(roleId))
-                throw new Exception("RoleId is empty.");
+                throw new Exception(Phrases.RoleIdEmpty);
 
             var matches = await _rolePermissionMatchRepository.GetPermissionIdsByRoleIdAsync(roleId);
             var permissions = new List<UserPermissionData>();
@@ -101,12 +102,12 @@ namespace Lykke.AlgoStore.Service.Security.Services
         public async Task DeletePermissionAsync(string permissionId)
         {
             if (string.IsNullOrEmpty(permissionId))
-                throw new Exception("PermissionId is empty.");
+                throw new Exception(Phrases.PermissionIdEmpty);
 
             var permission = await GetPermissionByIdAsync(permissionId);
 
             if (permission == null)
-                throw new Exception("Permission with this ID does not exist");
+                throw new Exception(string.Format(Phrases.PermissionDoesNotExist, permissionId));
 
             await _permissionsRepository.DeletePermissionAsync(permission);
         }
@@ -116,15 +117,15 @@ namespace Lykke.AlgoStore.Service.Security.Services
             foreach (var permission in data)
             {
                 if (string.IsNullOrEmpty(permission.RoleId))
-                    throw new Exception("RoleId is empty.");
+                    throw new Exception(Phrases.RoleIdEmpty);
 
                 if (string.IsNullOrEmpty(permission.PermissionId))
-                    throw new Exception("PermissionId is empty.");
+                    throw new Exception(Phrases.PermissionIdEmpty);
 
                 var role = await _rolesRepository.GetRoleByIdAsync(permission.RoleId);
 
                 if (!role.CanBeModified)
-                    throw new Exception("The permissions of this role cannot be modified.");
+                    throw new Exception(Phrases.PermissionsAreImmutable);
 
                 await _rolePermissionMatchRepository.RevokePermission(permission);
             }
