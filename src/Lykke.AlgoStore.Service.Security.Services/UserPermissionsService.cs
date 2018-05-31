@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Common.Log;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Repositories;
 using Lykke.AlgoStore.Service.Security.Core.Services;
@@ -13,19 +12,16 @@ namespace Lykke.AlgoStore.Service.Security.Services
     public class UserPermissionsService : IUserPermissionsService
     {
         private readonly IUserRolesRepository _rolesRepository;
-        private readonly ILog _log;
         private readonly IUserPermissionsRepository _permissionsRepository;
         private readonly IRolePermissionMatchRepository _rolePermissionMatchRepository;
 
         public UserPermissionsService(IUserPermissionsRepository permissionsRepository,
             IRolePermissionMatchRepository rolePermissionMatchRepository,
-            IUserRolesRepository rolesRepository,
-            ILog log)
+            IUserRolesRepository rolesRepository)
         {
             _permissionsRepository = permissionsRepository;
             _rolePermissionMatchRepository = rolePermissionMatchRepository;
             _rolesRepository = rolesRepository;
-            _log = log;
         }
 
         public async Task AssignPermissionsToRoleAsync(List<RolePermissionMatchData> data)

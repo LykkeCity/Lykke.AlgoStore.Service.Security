@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Common.Log;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Repositories;
 using Lykke.AlgoStore.Service.Security.Core.Services;
@@ -18,21 +17,18 @@ namespace Lykke.AlgoStore.Service.Security.Services
         private readonly IUserRoleMatchRepository _userRoleMatchRepository;
         private readonly IRolePermissionMatchRepository _rolePermissionMatchRepository;
         private readonly IPersonalDataService _personalDataService;
-        private readonly ILog _log;
 
         public UserRolesService(IUserRolesRepository rolesRepository,
             IUserPermissionsRepository permissionsRepository,
             IUserRoleMatchRepository userRoleMatchRepository,
             IRolePermissionMatchRepository rolePermissionMatchRepository,
-            IPersonalDataService personalDataService,
-            ILog log)
+            IPersonalDataService personalDataService)
         {
             _rolesRepository = rolesRepository;
             _permissionsRepository = permissionsRepository;
             _userRoleMatchRepository = userRoleMatchRepository;
             _rolePermissionMatchRepository = rolePermissionMatchRepository;
             _personalDataService = personalDataService;
-            _log = log;
         }
 
         public async Task<List<UserRoleData>> GetAllRolesAsync()
