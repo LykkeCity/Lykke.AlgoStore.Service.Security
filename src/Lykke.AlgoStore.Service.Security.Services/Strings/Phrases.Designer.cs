@@ -61,11 +61,74 @@ namespace Lykke.AlgoStore.Service.Security.Services.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Client with id {0} does not exist..
+        /// </summary>
+        public static string ClientDoesNotExist {
+            get {
+                return ResourceManager.GetString("ClientDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ClientId cannot be empty.
         /// </summary>
         public static string ClientIdEmpty {
             get {
                 return ResourceManager.GetString("ClientIdEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Role with id {0} does not exist..
+        /// </summary>
+        public static string RoleDoesNotExist {
+            get {
+                return ResourceManager.GetString("RoleDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RoleId is empty.
+        /// </summary>
+        public static string RoleIdEmpty {
+            get {
+                return ResourceManager.GetString("RoleIdEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This role can&apos;t be modified..
+        /// </summary>
+        public static string RoleIsImmutable {
+            get {
+                return ResourceManager.GetString("RoleIsImmutable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Role {0} already exists..
+        /// </summary>
+        public static string RoleNameExists {
+            get {
+                return ResourceManager.GetString("RoleNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Role name is required..
+        /// </summary>
+        public static string RoleNameRequired {
+            get {
+                return ResourceManager.GetString("RoleNameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current user does not belong to &apos;User&apos; role..
+        /// </summary>
+        public static string UserRoleNotAssigned {
+            get {
+                return ResourceManager.GetString("UserRoleNotAssigned", resourceCulture);
             }
         }
     }
