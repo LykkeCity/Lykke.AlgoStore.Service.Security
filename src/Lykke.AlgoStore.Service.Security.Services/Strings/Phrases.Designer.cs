@@ -79,6 +79,33 @@ namespace Lykke.AlgoStore.Service.Security.Services.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Permission with id {0} does not exist..
+        /// </summary>
+        public static string PermissionDoesNotExist {
+            get {
+                return ResourceManager.GetString("PermissionDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PermissionId is empty.
+        /// </summary>
+        public static string PermissionIdEmpty {
+            get {
+                return ResourceManager.GetString("PermissionIdEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The permissions of this role cannot be modified..
+        /// </summary>
+        public static string PermissionsAreImmutable {
+            get {
+                return ResourceManager.GetString("PermissionsAreImmutable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Role with id {0} does not exist..
         /// </summary>
         public static string RoleDoesNotExist {
