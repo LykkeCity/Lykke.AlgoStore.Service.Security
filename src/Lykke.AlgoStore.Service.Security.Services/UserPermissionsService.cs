@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -133,10 +134,10 @@ namespace Lykke.AlgoStore.Service.Security.Services
         public async Task<bool> HasPermission(string clientId, string permissionId)
         {
             if (string.IsNullOrEmpty(clientId))
-                throw new Exception(Phrases.ClientIdEmpty);
+                throw new ValidationException(Phrases.ClientIdEmpty);
 
             if (string.IsNullOrEmpty(permissionId))
-                throw new Exception(Phrases.PermissionIdEmpty);
+                throw new ValidationException(Phrases.PermissionIdEmpty);
 
             var userRoles = await _userRolesService.GetRolesByClientIdAsync(clientId);
 

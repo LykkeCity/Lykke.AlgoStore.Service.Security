@@ -1,12 +1,15 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using AzureStorage.Tables;
 using Common.Log;
+using Lykke.AlgoStore.Service.Security.Core;
 using Lykke.AlgoStore.Service.Security.Core.Services;
 using Lykke.AlgoStore.Service.Security.Modules;
+using Lykke.AlgoStore.Service.Security.Responses;
 using Lykke.AlgoStore.Service.Security.Settings;
 using Lykke.Common.ApiLibrary.Middleware;
 using Lykke.Common.ApiLibrary.Swagger;
@@ -89,7 +92,25 @@ namespace Lykke.AlgoStore.Service.Security
                 }
 
                 app.UseLykkeForwardedHeaders();
-                app.UseLykkeMiddleware("Security", ex => new { Message = "Technical problem" });
+                app.UseLykkeMiddleware(Constants.ComponentName, ex =>
+                {
+                    string errorMessage;
+
+                    switch (ex)
+                    {
+                        case InvalidOperationException ioe:
+                            errorMessage = $"Invalid operation: {ioe.Message}";
+                            break;
+                        case ValidationException ve:
+                            errorMessage = $"Validation error: {ve.Message}";
+                            break;
+                        default:
+                            errorMessage = "Technical problem";
+                            break;
+                    }
+
+                    return Error.Create(Constants.ComponentName, errorMessage);
+                });
 
                 app.UseMvc();
                 app.UseSwagger(c =>
