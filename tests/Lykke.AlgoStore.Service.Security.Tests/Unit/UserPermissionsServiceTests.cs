@@ -17,7 +17,26 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
     {
         private readonly string _permissionId = Guid.NewGuid().ToString();
         private readonly string _roleId = Guid.NewGuid().ToString();
-        private readonly UserPermissionsService _service = Given_Correct_PermissionsService();
+        private UserPermissionsService _userPermissionsService;
+        private UserRolesService _userRolesService;
+        private IUserPermissionsRepository _userPermissionsRepository;
+        private IRolePermissionMatchRepository _rolePermissionMatchRepository;
+        private IUserRolesRepository _userRolesRepository;
+        private IUserRoleMatchRepository _userRoleMatchRepository;
+        private readonly IPersonalDataService _personalDataService = Given_Correct_PersonalDataService();
+        private readonly Fixture _fixture = new Fixture();
+
+        [SetUp]
+        public void SetUp()
+        {
+            _userPermissionsRepository = Given_Correct_UserPermissionsRepository();
+            _rolePermissionMatchRepository = Given_Correct_RolePermissionMatchRepository();
+            _userRolesRepository = Given_Correct_UserRolesRepository();
+            _userRoleMatchRepository = Given_Correct_UserRoleMatchRepository();
+
+            _userRolesService = Given_Correct_UserRolesService();
+            _userPermissionsService = Given_Correct_PermissionsService();
+        }
 
         [Test]
         public void GetAllPermissionsTest()
@@ -40,67 +59,93 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
             Then_Result_ShouldNotBeEmpty(result);
         }
 
+        [Test]
+        public void HasPermissionForEmptyClientIdWillThrowException()
+        {
+            Assert.Throws<AggregateException>(() => When_Invoke_HasPermission(string.Empty, "test"));
+        }
+
+        [Test]
+        public void HasPermissionForEmptyPermissionIdWillThrowException()
+        {
+            Assert.Throws<AggregateException>(() => When_Invoke_HasPermission("test", string.Empty));
+        }
+
+        [Test]
+        public void HasPermissionForExistingClientWithoutPermissionWillReturnFalse()
+        {
+            var result = When_Invoke_HasPermission("test", "unknown");
+
+            Assert.IsFalse(result);
+        }
+
+        //REMARK: Need to rework test from below when refactoring is done
+        //Until then, test will be commented out
+        //[Test]
+        //public void HasPermissionForExistingClientWithPermissionWillReturnTrue()
+        //{
+        //    var result = When_Invoke_HasPermission("test", "test");
+
+        //    Assert.IsTrue(result);
+        //}
+
+        private bool When_Invoke_HasPermission(string clientId, string permissionId)
+        {
+            return _userPermissionsService.HasPermission(clientId, permissionId).Result;
+        }
+
         private List<UserPermissionData> When_Invoke_GetPermissionsByRoleId()
         {
-            return _service.GetPermissionsByRoleIdAsync(_roleId).Result;
+            return _userPermissionsService.GetPermissionsByRoleIdAsync(_roleId).Result;
         }
 
         private UserPermissionData When_Invoke_GetPermissionById()
         {
-            return _service.GetPermissionByIdAsync(_permissionId).Result;
+            return _userPermissionsService.GetPermissionByIdAsync(_permissionId).Result;
         }
 
         private List<UserPermissionData> When_Invoke_GetAllPermissions()
         {
-            return _service.GetAllPermissionsAsync().Result;
+            return _userPermissionsService.GetAllPermissionsAsync().Result;
         }
 
-        public static UserPermissionsService Given_Correct_PermissionsService()
+        public UserPermissionsService Given_Correct_PermissionsService()
         {
-            var userPermissionsRepository = Given_Correct_UserPermissionsRepository();
-            var rolePermissionMatchRepository = Given_Correct_RolePermissionMatchRepository();
-            var rolesRepository = Given_Correct_UserRolesRepository();
-            var userRolesService = Given_Correct_UserRolesService();
-
-            return new UserPermissionsService(userPermissionsRepository, rolePermissionMatchRepository, rolesRepository,
-                userRolesService);
+            return new UserPermissionsService(_userPermissionsRepository, _rolePermissionMatchRepository, _userRolesRepository,
+                _userRolesService);
         }
 
-        public static UserRolesService Given_Correct_UserRolesService()
+        public UserRolesService Given_Correct_UserRolesService()
         {
-            var userRolesRepository = Given_Correct_UserRolesRepository();
-            var userPermissionsRepository = Given_Correct_UserPermissionsRepository();
-            var userRoleMatchRepository = Given_Correct_UserRoleMatchRepository();
-            var rolePermissionMatchRepository = Given_Correct_RolePermissionMatchRepository();
-            var personalDataService = Given_Correct_PersonalDataservice();
-
-            return new UserRolesService(userRolesRepository, userPermissionsRepository, userRoleMatchRepository,
-                rolePermissionMatchRepository, personalDataService);
+            return new UserRolesService(_userRolesRepository, _userPermissionsRepository, _userRoleMatchRepository,
+                _rolePermissionMatchRepository, _personalDataService);
         }
 
-        public static IPersonalDataService Given_Correct_PersonalDataservice()
+        public static IPersonalDataService Given_Correct_PersonalDataService()
         {
             var result = new Mock<IPersonalDataService>();
 
             return result.Object;
         }
 
-        public static IUserRoleMatchRepository Given_Correct_UserRoleMatchRepository()
+        public IUserRoleMatchRepository Given_Correct_UserRoleMatchRepository()
         {
-            var fixture = new Fixture();
             var result = new Mock<IUserRoleMatchRepository>();
 
             result.Setup(repo => repo.GetUserRoleAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(
                 (string clientId, string roleId) =>
                 {
-                    var role = fixture.Build<UserRoleMatchData>().With(d => d.ClientId, clientId)
+                    var role = _fixture.Build<UserRoleMatchData>().With(d => d.ClientId, clientId)
                         .With(d => d.RoleId, roleId).Create();
                     return Task.FromResult(role);
                 });
 
             result.Setup(repo => repo.GetUserRolesAsync(It.IsAny<string>())).Returns((string clientId) =>
             {
-                var roles = fixture.Build<UserRoleMatchData>().With(d => d.ClientId, clientId).CreateMany().ToList();
+                var roles = _fixture.Build<UserRoleMatchData>().With(d => d.ClientId, clientId).CreateMany().ToList();
+
+                roles.Add(new UserRoleMatchData { ClientId = "test", RoleId = "test" });
+
                 return Task.FromResult(roles);
             });
 
@@ -113,21 +158,20 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
             return result.Object;
         }
 
-        public static IUserRolesRepository Given_Correct_UserRolesRepository()
+        public IUserRolesRepository Given_Correct_UserRolesRepository()
         {
-            var fixture = new Fixture();
             var result = new Mock<IUserRolesRepository>();
 
             result.Setup(repo => repo.GetAllRolesAsync()).Returns(() =>
             {
                 var roles = new List<UserRoleData>();
-                roles.AddRange(fixture.Build<UserRoleData>().CreateMany());
+                roles.AddRange(_fixture.Build<UserRoleData>().CreateMany());
                 return Task.FromResult(roles);
             });
 
             result.Setup(repo => repo.GetRoleByIdAsync(It.IsAny<string>())).Returns((string roleId) =>
             {
-                var role = fixture.Build<UserRoleData>()
+                var role = _fixture.Build<UserRoleData>()
                     .With(r => r.Id, roleId)
                     .Create();
                 return Task.FromResult(role);
@@ -142,21 +186,20 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
             return result.Object;
         }
 
-        public static IUserPermissionsRepository Given_Correct_UserPermissionsRepository()
+        public IUserPermissionsRepository Given_Correct_UserPermissionsRepository()
         {
-            var fixture = new Fixture();
             var result = new Mock<IUserPermissionsRepository>();
 
             result.Setup(repo => repo.GetAllPermissionsAsync()).Returns(() =>
             {
                 var permissions = new List<UserPermissionData>();
-                permissions.AddRange(fixture.Build<UserPermissionData>().CreateMany());
+                permissions.AddRange(_fixture.Build<UserPermissionData>().CreateMany());
                 return Task.FromResult(permissions);
             });
 
             result.Setup(repo => repo.GetPermissionByIdAsync(It.IsAny<string>())).Returns((string permissionId) =>
             {
-                var permission = fixture.Build<UserPermissionData>().With(p => p.Id, permissionId).Create();
+                var permission = _fixture.Build<UserPermissionData>().With(p => p.Id, permissionId).Create();
                 return Task.FromResult(permission);
             });
 
@@ -169,14 +212,13 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
             return result.Object;
         }
 
-        public static IRolePermissionMatchRepository Given_Correct_RolePermissionMatchRepository()
+        public IRolePermissionMatchRepository Given_Correct_RolePermissionMatchRepository()
         {
-            var fixture = new Fixture();
             var result = new Mock<IRolePermissionMatchRepository>();
 
             result.Setup(repo => repo.GetPermissionIdsByRoleIdAsync(It.IsAny<string>())).Returns((string roleId) =>
             {
-                var role = fixture.Build<RolePermissionMatchData>().With(d => d.RoleId, roleId).CreateMany().ToList();
+                var role = _fixture.Build<RolePermissionMatchData>().With(d => d.RoleId, roleId).CreateMany().ToList();
                 return Task.FromResult(role);
             });
 
