@@ -34,7 +34,7 @@ namespace Lykke.AlgoStore.Service.Security.Core.Utils
                 var elapsed = sw.ElapsedMilliseconds;
                 var message = $"Client {clientId} executed {methodName} for {elapsed}ms with HasError={hasError}";
 
-                log.WriteInfoAsync(Constants.ProcessName, context, message).Wait();
+                log.WriteInfoAsync(Constants.ComponentName, context, message).Wait();
             }
         }
 
@@ -65,7 +65,7 @@ namespace Lykke.AlgoStore.Service.Security.Core.Utils
                 var elapsed = sw.ElapsedMilliseconds;
                 var message = $"Client {clientId} executed {methodName} for {elapsed}ms with HasError={hasError}";
 
-                log.WriteInfoAsync(Constants.ProcessName, context, message).Wait();
+                log.WriteInfoAsync(Constants.ComponentName, context, message).Wait();
             }
         }
     }
