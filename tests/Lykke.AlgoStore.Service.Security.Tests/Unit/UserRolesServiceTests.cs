@@ -189,8 +189,9 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
             var userPermissionsRepository = Given_Correct_UserPermissionsRepository();
             var rolePermissionMatchRepository = Given_Correct_RolePermissionMatchRepository();
             var userRolesRepository = Given_Correct_UserRolesRepository();
+            var userRolesService = Given_Correct_UserRolesService();
             return new UserPermissionsService(userPermissionsRepository, rolePermissionMatchRepository,
-                userRolesRepository);
+                userRolesRepository, userRolesService);
         }
 
         public static IPersonalDataService Given_Correct_PersonalDataservice()

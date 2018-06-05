@@ -13,5 +13,6 @@ namespace Lykke.AlgoStore.Service.Security.Core.Services
         Task RevokePermissionsFromRole(List<RolePermissionMatchData> data);
         Task AssignPermissionsToRoleAsync(List<RolePermissionMatchData> data);
         Task DeletePermissionAsync(string permissionId);
+        Task<bool> HasPermission(string clientId, string permissionId);
     }
 }

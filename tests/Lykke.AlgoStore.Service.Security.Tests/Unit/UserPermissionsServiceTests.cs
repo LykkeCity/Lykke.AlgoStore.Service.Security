@@ -6,6 +6,7 @@ using AutoFixture;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Repositories;
 using Lykke.AlgoStore.Service.Security.Services;
+using Lykke.Service.PersonalData.Contract;
 using Moq;
 using NUnit.Framework;
 
@@ -59,7 +60,57 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
             var userPermissionsRepository = Given_Correct_UserPermissionsRepository();
             var rolePermissionMatchRepository = Given_Correct_RolePermissionMatchRepository();
             var rolesRepository = Given_Correct_UserRolesRepository();
-            return new UserPermissionsService(userPermissionsRepository, rolePermissionMatchRepository, rolesRepository);
+            var userRolesService = Given_Correct_UserRolesService();
+
+            return new UserPermissionsService(userPermissionsRepository, rolePermissionMatchRepository, rolesRepository,
+                userRolesService);
+        }
+
+        public static UserRolesService Given_Correct_UserRolesService()
+        {
+            var userRolesRepository = Given_Correct_UserRolesRepository();
+            var userPermissionsRepository = Given_Correct_UserPermissionsRepository();
+            var userRoleMatchRepository = Given_Correct_UserRoleMatchRepository();
+            var rolePermissionMatchRepository = Given_Correct_RolePermissionMatchRepository();
+            var personalDataService = Given_Correct_PersonalDataservice();
+
+            return new UserRolesService(userRolesRepository, userPermissionsRepository, userRoleMatchRepository,
+                rolePermissionMatchRepository, personalDataService);
+        }
+
+        public static IPersonalDataService Given_Correct_PersonalDataservice()
+        {
+            var result = new Mock<IPersonalDataService>();
+
+            return result.Object;
+        }
+
+        public static IUserRoleMatchRepository Given_Correct_UserRoleMatchRepository()
+        {
+            var fixture = new Fixture();
+            var result = new Mock<IUserRoleMatchRepository>();
+
+            result.Setup(repo => repo.GetUserRoleAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(
+                (string clientId, string roleId) =>
+                {
+                    var role = fixture.Build<UserRoleMatchData>().With(d => d.ClientId, clientId)
+                        .With(d => d.RoleId, roleId).Create();
+                    return Task.FromResult(role);
+                });
+
+            result.Setup(repo => repo.GetUserRolesAsync(It.IsAny<string>())).Returns((string clientId) =>
+            {
+                var roles = fixture.Build<UserRoleMatchData>().With(d => d.ClientId, clientId).CreateMany().ToList();
+                return Task.FromResult(roles);
+            });
+
+            result.Setup(repo => repo.SaveUserRoleAsync(It.IsAny<UserRoleMatchData>()))
+                .Returns((UserRoleMatchData data) => Task.FromResult(data));
+
+            result.Setup(repo => repo.RevokeUserRole(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(() => Task.CompletedTask);
+
+            return result.Object;
         }
 
         public static IUserRolesRepository Given_Correct_UserRolesRepository()
