@@ -33,23 +33,23 @@ namespace Lykke.AlgoStore.Service.Security.Services
             foreach (var permission in data)
             {
                 if (string.IsNullOrEmpty(permission.PermissionId))
-                    throw new Exception(Phrases.PermissionIdEmpty);
+                    throw new ValidationException(Phrases.PermissionIdEmpty);
 
                 if (string.IsNullOrEmpty(permission.RoleId))
-                    throw new Exception(Phrases.RoleIdEmpty);
+                    throw new ValidationException(Phrases.RoleIdEmpty);
 
                 var dbPermission = await _permissionsRepository.GetPermissionByIdAsync(permission.PermissionId);
 
                 if (dbPermission == null)
-                    throw new Exception(string.Format(Phrases.PermissionDoesNotExist, permission.PermissionId));
+                    throw new ValidationException(string.Format(Phrases.PermissionDoesNotExist, permission.PermissionId));
 
                 var role = await _rolesRepository.GetRoleByIdAsync(permission.RoleId);
 
                 if (role == null)
-                    throw new Exception(string.Format(Phrases.RoleDoesNotExist, permission.RoleId));
+                    throw new ValidationException(string.Format(Phrases.RoleDoesNotExist, permission.RoleId));
 
                 if (!role.CanBeModified)
-                    throw new Exception(Phrases.PermissionsAreImmutable);
+                    throw new ValidationException(Phrases.PermissionsAreImmutable);
 
                 await _rolePermissionMatchRepository.AssignPermissionToRoleAsync(permission);
             }
@@ -64,7 +64,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
         public async Task<UserPermissionData> GetPermissionByIdAsync(string permissionId)
         {
             if (string.IsNullOrEmpty(permissionId))
-                throw new Exception(Phrases.PermissionIdEmpty);
+                throw new ValidationException(Phrases.PermissionIdEmpty);
 
             var result = await _permissionsRepository.GetPermissionByIdAsync(permissionId);
             return result;
@@ -73,7 +73,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
         public async Task<List<UserPermissionData>> GetPermissionsByRoleIdAsync(string roleId)
         {
             if (string.IsNullOrEmpty(roleId))
-                throw new Exception(Phrases.RoleIdEmpty);
+                throw new ValidationException(Phrases.RoleIdEmpty);
 
             var matches = await _rolePermissionMatchRepository.GetPermissionIdsByRoleIdAsync(roleId);
             var permissions = new List<UserPermissionData>();
@@ -102,12 +102,12 @@ namespace Lykke.AlgoStore.Service.Security.Services
         public async Task DeletePermissionAsync(string permissionId)
         {
             if (string.IsNullOrEmpty(permissionId))
-                throw new Exception(Phrases.PermissionIdEmpty);
+                throw new ValidationException(Phrases.PermissionIdEmpty);
 
             var permission = await GetPermissionByIdAsync(permissionId);
 
             if (permission == null)
-                throw new Exception(string.Format(Phrases.PermissionDoesNotExist, permissionId));
+                throw new ValidationException(string.Format(Phrases.PermissionDoesNotExist, permissionId));
 
             await _permissionsRepository.DeletePermissionAsync(permission);
         }
@@ -117,15 +117,15 @@ namespace Lykke.AlgoStore.Service.Security.Services
             foreach (var permission in data)
             {
                 if (string.IsNullOrEmpty(permission.RoleId))
-                    throw new Exception(Phrases.RoleIdEmpty);
+                    throw new ValidationException(Phrases.RoleIdEmpty);
 
                 if (string.IsNullOrEmpty(permission.PermissionId))
-                    throw new Exception(Phrases.PermissionIdEmpty);
+                    throw new ValidationException(Phrases.PermissionIdEmpty);
 
                 var role = await _rolesRepository.GetRoleByIdAsync(permission.RoleId);
 
                 if (!role.CanBeModified)
-                    throw new Exception(Phrases.PermissionsAreImmutable);
+                    throw new ValidationException(Phrases.PermissionsAreImmutable);
 
                 await _rolePermissionMatchRepository.RevokePermission(permission);
             }
