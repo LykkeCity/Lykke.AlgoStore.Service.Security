@@ -77,5 +77,15 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("hasPermission")]
+        [SwaggerOperation("HasPermission")]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> HasPermission(string clientId, string permissionId)
+        {
+            var result = await _permissionsService.HasPermission(clientId, permissionId);
+
+            return Ok(result);
+        }
     }
 }
