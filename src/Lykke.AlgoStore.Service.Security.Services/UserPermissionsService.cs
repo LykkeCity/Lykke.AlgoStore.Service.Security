@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
@@ -14,14 +15,16 @@ namespace Lykke.AlgoStore.Service.Security.Services
         private readonly IUserRolesRepository _rolesRepository;
         private readonly IUserPermissionsRepository _permissionsRepository;
         private readonly IRolePermissionMatchRepository _rolePermissionMatchRepository;
+        private readonly IUserRolesService _userRolesService;
 
         public UserPermissionsService(IUserPermissionsRepository permissionsRepository,
             IRolePermissionMatchRepository rolePermissionMatchRepository,
-            IUserRolesRepository rolesRepository)
+            IUserRolesRepository rolesRepository, IUserRolesService userRolesService)
         {
             _permissionsRepository = permissionsRepository;
             _rolePermissionMatchRepository = rolePermissionMatchRepository;
             _rolesRepository = rolesRepository;
+            _userRolesService = userRolesService;
         }
 
         public async Task AssignPermissionsToRoleAsync(List<RolePermissionMatchData> data)
@@ -125,6 +128,19 @@ namespace Lykke.AlgoStore.Service.Security.Services
 
                 await _rolePermissionMatchRepository.RevokePermission(permission);
             }
+        }
+
+        public async Task<bool> HasPermission(string clientId, string permissionId)
+        {
+            if (string.IsNullOrEmpty(clientId))
+                throw new Exception(Phrases.ClientIdEmpty);
+
+            if (string.IsNullOrEmpty(permissionId))
+                throw new Exception(Phrases.PermissionIdEmpty);
+
+            var userRoles = await _userRolesService.GetRolesByClientIdAsync(clientId);
+
+            return userRoles.Any(x => x.Permissions.Any(y => y.Id == permissionId));
         }
     }
 }
