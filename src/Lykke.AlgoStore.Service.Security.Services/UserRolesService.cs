@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
@@ -55,7 +56,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
         public async Task<UserRoleData> GetRoleByIdAsync(string roleId)
         {
             if (string.IsNullOrEmpty(roleId))
-                throw new Exception(Phrases.RoleIdEmpty);
+                throw new ValidationException(Phrases.RoleIdEmpty);
 
             var role = await _rolesRepository.GetRoleByIdAsync(roleId);
 
@@ -78,7 +79,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
         public async Task<List<UserRoleData>> GetRolesByClientIdAsync(string clientId)
         {
             if (string.IsNullOrEmpty(clientId))
-                throw new Exception(Phrases.ClientIdEmpty);
+                throw new ValidationException(Phrases.ClientIdEmpty);
 
             var roleMatches = await _userRoleMatchRepository.GetUserRolesAsync(clientId);
             var roles = new List<UserRoleData>();
@@ -118,7 +119,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
         public async Task<AlgoStoreUserData> GeyUserByIdWithRoles(string clientId)
         {
             if (string.IsNullOrEmpty(clientId))
-                throw new Exception(Phrases.ClientIdEmpty);
+                throw new ValidationException(Phrases.ClientIdEmpty);
 
             var matches = await _userRoleMatchRepository.GetUserRolesAsync(clientId);
 
@@ -138,20 +139,20 @@ namespace Lykke.AlgoStore.Service.Security.Services
         public async Task AssignRoleToUser(UserRoleMatchData data)
         {
             if (string.IsNullOrEmpty(data.ClientId))
-                throw new Exception(Phrases.ClientIdEmpty);
+                throw new ValidationException(Phrases.ClientIdEmpty);
 
             if (string.IsNullOrEmpty(data.RoleId))
-                throw new Exception(Phrases.RoleIdEmpty);
+                throw new ValidationException(Phrases.RoleIdEmpty);
 
             var role = await _rolesRepository.GetRoleByIdAsync(data.RoleId);
 
             if (role == null)
-                throw new Exception(string.Format(Phrases.RoleDoesNotExist, data.RoleId));
+                throw new ValidationException(string.Format(Phrases.RoleDoesNotExist, data.RoleId));
 
             var clientData = await _personalDataService.GetAsync(data.ClientId);
 
             if (clientData == null)
-                throw new Exception(string.Format(Phrases.ClientDoesNotExist, data.ClientId));
+                throw new ValidationException(string.Format(Phrases.ClientDoesNotExist, data.ClientId));
 
             await _userRoleMatchRepository.SaveUserRoleAsync(data);
         }
@@ -161,11 +162,11 @@ namespace Lykke.AlgoStore.Service.Security.Services
             if (role.Id == null)
             {
                 if (String.IsNullOrEmpty(role.Name))
-                    throw new Exception(Phrases.RoleNameRequired);
+                    throw new ValidationException(Phrases.RoleNameRequired);
 
                 if (await _rolesRepository.RoleExistsAsync(role.Name))
                 {
-                    throw new Exception(string.Format(Phrases.RoleNameExists, role.Name));
+                    throw new ValidationException(string.Format(Phrases.RoleNameExists, role.Name));
                 }
 
                 role.Id = Guid.NewGuid().ToString();
@@ -177,7 +178,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
                 var dbRole = await _rolesRepository.GetRoleByIdAsync(role.Id);
                 if (dbRole != null && !dbRole.CanBeModified)
                 {
-                    throw new Exception(Phrases.RoleIsImmutable);
+                    throw new ValidationException(Phrases.RoleIsImmutable);
                 }
 
                 // because the RK is the role name, in order to update it, first delete the old role and then replace it with the new one
@@ -191,10 +192,10 @@ namespace Lykke.AlgoStore.Service.Security.Services
         public async Task RevokeRoleFromUser(UserRoleMatchData data)
         {
             if (string.IsNullOrEmpty(data.RoleId))
-                throw new Exception(Phrases.RoleIdEmpty);
+                throw new ValidationException(Phrases.RoleIdEmpty);
 
             if (string.IsNullOrEmpty(data.ClientId))
-                throw new Exception(Phrases.ClientIdEmpty);
+                throw new ValidationException(Phrases.ClientIdEmpty);
 
             await _userRoleMatchRepository.RevokeUserRole(data.ClientId, data.RoleId);
         }
@@ -202,12 +203,12 @@ namespace Lykke.AlgoStore.Service.Security.Services
         public async Task VerifyUserRole(string clientId)
         {
             if (string.IsNullOrEmpty(clientId))
-                throw new Exception(Phrases.ClientIdEmpty);
+                throw new ValidationException(Phrases.ClientIdEmpty);
 
             var clientData = await _personalDataService.GetAsync(clientId);
 
             if (clientData == null)
-                throw new Exception(string.Format(Phrases.ClientDoesNotExist, clientId));
+                throw new ValidationException(string.Format(Phrases.ClientDoesNotExist, clientId));
 
             var roles = await _userRoleMatchRepository.GetUserRolesAsync(clientId);
 
@@ -219,7 +220,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
                 var userRole = allRoles.FirstOrDefault(role => role.Name == "User" && !role.CanBeDeleted);
 
                 if (userRole == null)
-                    throw new Exception(Phrases.UserRoleNotAssigned);
+                    throw new ValidationException(Phrases.UserRoleNotAssigned);
 
                 await _userRoleMatchRepository.SaveUserRoleAsync(new UserRoleMatchData
                 {
@@ -232,12 +233,12 @@ namespace Lykke.AlgoStore.Service.Security.Services
         public async Task DeleteRoleAsync(string roleId)
         {
             if (string.IsNullOrEmpty(roleId))
-                throw new Exception(Phrases.RoleIdEmpty);
+                throw new ValidationException(Phrases.RoleIdEmpty);
 
             var role = await _rolesRepository.GetRoleByIdAsync(roleId);
 
             if (role == null)
-                throw new Exception(string.Format(Phrases.RoleDoesNotExist, roleId));
+                throw new ValidationException(string.Format(Phrases.RoleDoesNotExist, roleId));
 
             //first check if the role has permissions assigned
             var permissionsForRole = await _rolePermissionMatchRepository.GetPermissionIdsByRoleIdAsync(roleId);
@@ -261,7 +262,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
             }
 
             if (!role.CanBeDeleted)
-                throw new Exception(Phrases.RoleIsImmutable);
+                throw new ValidationException(Phrases.RoleIsImmutable);
 
             await _rolesRepository.DeleteRoleAsync(role);
         }
