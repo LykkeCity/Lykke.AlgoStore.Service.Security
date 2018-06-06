@@ -8,7 +8,6 @@ using Lykke.AlgoStore.Service.Security.Core.Repositories;
 using Lykke.AlgoStore.Service.Security.Core.Services;
 using Lykke.AlgoStore.Service.Security.Services;
 using Lykke.AlgoStore.Service.Security.Settings;
-using Lykke.AlgoStore.Service.Security.Settings.ServiceSettings;
 using Lykke.Service.PersonalData.Client;
 using Lykke.Service.PersonalData.Contract;
 using Lykke.SettingsReader;

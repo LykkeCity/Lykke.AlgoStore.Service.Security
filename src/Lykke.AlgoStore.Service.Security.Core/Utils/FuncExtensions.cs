@@ -23,11 +23,10 @@ namespace Lykke.AlgoStore.Service.Security.Core.Utils
             {
                 await action();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 hasError = true;
                 throw;
-                //throw HandleException(ex);
             }
             finally
             {
@@ -54,11 +53,10 @@ namespace Lykke.AlgoStore.Service.Security.Core.Utils
             {
                 return await action();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 hasError = true;
                 throw;
-                //throw HandleException(ex);
             }
             finally
             {
