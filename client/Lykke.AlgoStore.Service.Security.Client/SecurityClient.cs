@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Common.Log;
 using Lykke.Service.Security.Client.AutorestClient;
@@ -49,6 +50,61 @@ namespace Lykke.AlgoStore.Service.Security.Client
             var result = await _service.HasPermissionAsync(clientId, permissionId);
 
             return result.HasValue && result.Value;
+        }
+
+        public async Task<IEnumerable<UserRoleModel>> GetAllUserRoles()
+        {
+            return await _service.GetAllUserRolesAsync();
+        }
+
+        public async Task<UserRoleModel> GetRoleById(string roleId)
+        {
+            return await _service.GetRoleByIdAsync(roleId);
+        }
+
+        public async Task<IEnumerable<UserRoleModel>> GetRolesByClientId(string clientId)
+        {
+            return await _service.GetRolesByClientIdAsync(clientId);
+        }
+
+        public async Task<UserRoleModel> SaveUserRole(UserRoleModel role)
+        {
+            return await _service.SaveUserRoleAsync(role);
+        }
+
+        public async Task<UserRoleModel> UpdateUserRole(UserRoleUpdateModel role)
+        {
+            return await _service.UpdateUserRoleAsync(role);
+        }
+
+        public async Task AssignUserRole(UserRoleMatchModel role)
+        {
+            await _service.AssignUserRoleAsync(role);
+        }
+
+        public async Task RevokeRoleFromUser(UserRoleMatchModel role)
+        {
+            await _service.RevokeRoleFromUserAsync(role);
+        }
+
+        public async Task VerifyUserRole(string clientId)
+        {
+            await _service.VerifyUserRoleAsync(clientId);
+        }
+
+        public async Task DeleteUserRole(string roleId)
+        {
+            await _service.DeleteUserRoleAsync(roleId);
+        }
+
+        public async Task<IEnumerable<AlgoStoreUserData>> GetAllUsersWithRoles()
+        {
+            return await _service.GetAllUsersWithRolesAsync();
+        }
+
+        public async Task<IEnumerable<AlgoStoreUserData>> GetUserByIdWithRoles(string clientId)
+        {
+            return await _service.GetUserByIdWithRolesAsync(clientId);
         }
 
         public void Dispose()

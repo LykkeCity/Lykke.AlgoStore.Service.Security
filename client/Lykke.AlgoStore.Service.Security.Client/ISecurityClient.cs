@@ -10,14 +10,14 @@ namespace Lykke.AlgoStore.Service.Security.Client
         /// <summary>
         /// Get all permissions
         /// </summary>
-        /// <returns></returns>
+        /// <returns>All permissions</returns>
         Task<IEnumerable<UserPermissionModel>> GetAllPermissionsAsync();
 
         /// <summary>
         /// Get permission by id
         /// </summary>
         /// <param name="permissionId">Permission Id</param>
-        /// <returns>User permission or NULL if no such permission exists</returns>
+        /// <returns>User permission or NULL otherwise</returns>
         Task<UserPermissionModel> GetPermissionByIdAsync(string permissionId);
 
         /// <summary>
@@ -48,5 +48,80 @@ namespace Lykke.AlgoStore.Service.Security.Client
         /// <param name="permissionId">Permission Id</param>
         /// <returns>TRUE when client has specific permission, otherwise FALSE</returns>
         Task<bool> HasPermission(string clientId, string permissionId);
+
+        /// <summary>
+        /// Get all roles
+        /// </summary>
+        /// <returns>All roles</returns>
+        Task<IEnumerable<UserRoleModel>> GetAllUserRoles();
+
+        /// <summary>
+        /// Get role by Id
+        /// </summary>
+        /// <param name="roleId">Role Id</param>
+        /// <returns>Found role or NULL otherwise</returns>
+        Task<UserRoleModel> GetRoleById(string roleId);
+
+        /// <summary>
+        /// Get client roles
+        /// </summary>
+        /// <param name="clientId">Client Id</param>
+        /// <returns>Client roles</returns>
+        Task<IEnumerable<UserRoleModel>> GetRolesByClientId(string clientId);
+
+        /// <summary>
+        /// Save user role
+        /// </summary>
+        /// <param name="role">user role to save</param>
+        /// <returns>User role</returns>
+        Task<UserRoleModel> SaveUserRole(UserRoleModel role);
+
+        /// <summary>
+        /// Update user role
+        /// </summary>
+        /// <param name="role">User role to update</param>
+        /// <returns>User role</returns>
+        Task<UserRoleModel> UpdateUserRole(UserRoleUpdateModel role);
+
+        /// <summary>
+        /// Assign specific role to user
+        /// </summary>
+        /// <param name="role">User role to assign</param>
+        /// <returns></returns>
+        Task AssignUserRole(UserRoleMatchModel role);
+
+        /// <summary>
+        /// Remove specific role from user
+        /// </summary>
+        /// <param name="role">User role to revoke</param>
+        /// <returns></returns>
+        Task RevokeRoleFromUser(UserRoleMatchModel role);
+
+        /// <summary>
+        /// Verify user role
+        /// </summary>
+        /// <param name="clientId">Client Id</param>
+        /// <returns></returns>
+        Task VerifyUserRole(string clientId);
+
+        /// <summary>
+        /// Delete user role
+        /// </summary>
+        /// <param name="roleId">Role Id</param>
+        /// <returns></returns>
+        Task DeleteUserRole(string roleId);
+
+        /// <summary>
+        /// Get all users with their roles
+        /// </summary>
+        /// <returns>All users with their roles</returns>
+        Task<IEnumerable<AlgoStoreUserData>> GetAllUsersWithRoles();
+
+        /// <summary>
+        /// Get user with roles
+        /// </summary>
+        /// <param name="clientId">Client Id</param>
+        /// <returns>User with roles</returns>
+        Task<IEnumerable<AlgoStoreUserData>> GetUserByIdWithRoles(string clientId);
     }
 }

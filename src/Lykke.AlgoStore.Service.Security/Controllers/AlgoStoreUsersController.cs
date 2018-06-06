@@ -22,7 +22,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         }
 
         [HttpGet("getAllWithRoles")]
-        [SwaggerOperation("GetAllUserRoles")]
+        [SwaggerOperation("GetAllUsersWithRoles")]
         [ProducesResponseType(typeof(List<AlgoStoreUserData>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetAllUsersWithRoles()
         {
@@ -33,7 +33,6 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         [HttpGet("getByIdWithRoles")]
         [SwaggerOperation("GetUserByIdWithRoles")]
         [ProducesResponseType(typeof(List<AlgoStoreUserData>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserByIdWithRoles(string clientId)
         {
             if (string.IsNullOrEmpty(clientId))

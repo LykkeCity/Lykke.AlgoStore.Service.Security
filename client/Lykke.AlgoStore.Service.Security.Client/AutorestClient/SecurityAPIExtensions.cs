@@ -220,7 +220,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
             /// </param>
             /// <param name='clientId'>
             /// </param>
-            public static UserRoleModel GetRolesByClientId(this ISecurityAPI operations, string clientId = default(string))
+            public static IList<UserRoleModel> GetRolesByClientId(this ISecurityAPI operations, string clientId = default(string))
             {
                 return operations.GetRolesByClientIdAsync(clientId).GetAwaiter().GetResult();
             }
@@ -233,7 +233,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<UserRoleModel> GetRolesByClientIdAsync(this ISecurityAPI operations, string clientId = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<IList<UserRoleModel>> GetRolesByClientIdAsync(this ISecurityAPI operations, string clientId = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.GetRolesByClientIdWithHttpMessagesAsync(clientId, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -272,9 +272,9 @@ namespace Lykke.Service.Security.Client.AutorestClient
             /// </param>
             /// <param name='role'>
             /// </param>
-            public static UserRoleModel SaveUserRole1(this ISecurityAPI operations, UserRoleUpdateModel role = default(UserRoleUpdateModel))
+            public static UserRoleModel UpdateUserRole(this ISecurityAPI operations, UserRoleUpdateModel role = default(UserRoleUpdateModel))
             {
-                return operations.SaveUserRole1Async(role).GetAwaiter().GetResult();
+                return operations.UpdateUserRoleAsync(role).GetAwaiter().GetResult();
             }
 
             /// <param name='operations'>
@@ -285,9 +285,9 @@ namespace Lykke.Service.Security.Client.AutorestClient
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<UserRoleModel> SaveUserRole1Async(this ISecurityAPI operations, UserRoleUpdateModel role = default(UserRoleUpdateModel), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<UserRoleModel> UpdateUserRoleAsync(this ISecurityAPI operations, UserRoleUpdateModel role = default(UserRoleUpdateModel), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.SaveUserRole1WithHttpMessagesAsync(role, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.UpdateUserRoleWithHttpMessagesAsync(role, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Body;
                 }
@@ -344,9 +344,9 @@ namespace Lykke.Service.Security.Client.AutorestClient
             /// </param>
             /// <param name='clientId'>
             /// </param>
-            public static UserRoleModel VerifyUserRole(this ISecurityAPI operations, string clientId = default(string))
+            public static void VerifyUserRole(this ISecurityAPI operations, string clientId = default(string))
             {
-                return operations.VerifyUserRoleAsync(clientId).GetAwaiter().GetResult();
+                operations.VerifyUserRoleAsync(clientId).GetAwaiter().GetResult();
             }
 
             /// <param name='operations'>
@@ -357,12 +357,9 @@ namespace Lykke.Service.Security.Client.AutorestClient
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<UserRoleModel> VerifyUserRoleAsync(this ISecurityAPI operations, string clientId = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task VerifyUserRoleAsync(this ISecurityAPI operations, string clientId = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.VerifyUserRoleWithHttpMessagesAsync(clientId, null, cancellationToken).ConfigureAwait(false))
-                {
-                    return _result.Body;
-                }
+                (await operations.VerifyUserRoleWithHttpMessagesAsync(clientId, null, cancellationToken).ConfigureAwait(false)).Dispose();
             }
 
             /// <param name='operations'>
@@ -391,9 +388,9 @@ namespace Lykke.Service.Security.Client.AutorestClient
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            public static IList<AlgoStoreUserData> GetAllUserRoles1(this ISecurityAPI operations)
+            public static IList<AlgoStoreUserData> GetAllUsersWithRoles(this ISecurityAPI operations)
             {
-                return operations.GetAllUserRoles1Async().GetAwaiter().GetResult();
+                return operations.GetAllUsersWithRolesAsync().GetAwaiter().GetResult();
             }
 
             /// <param name='operations'>
@@ -402,9 +399,9 @@ namespace Lykke.Service.Security.Client.AutorestClient
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<IList<AlgoStoreUserData>> GetAllUserRoles1Async(this ISecurityAPI operations, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<IList<AlgoStoreUserData>> GetAllUsersWithRolesAsync(this ISecurityAPI operations, CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.GetAllUserRoles1WithHttpMessagesAsync(null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.GetAllUsersWithRolesWithHttpMessagesAsync(null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Body;
                 }
@@ -415,7 +412,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
             /// </param>
             /// <param name='clientId'>
             /// </param>
-            public static object GetUserByIdWithRoles(this ISecurityAPI operations, string clientId = default(string))
+            public static IList<AlgoStoreUserData> GetUserByIdWithRoles(this ISecurityAPI operations, string clientId = default(string))
             {
                 return operations.GetUserByIdWithRolesAsync(clientId).GetAwaiter().GetResult();
             }
@@ -428,7 +425,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> GetUserByIdWithRolesAsync(this ISecurityAPI operations, string clientId = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<IList<AlgoStoreUserData>> GetUserByIdWithRolesAsync(this ISecurityAPI operations, string clientId = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.GetUserByIdWithRolesWithHttpMessagesAsync(clientId, null, cancellationToken).ConfigureAwait(false))
                 {

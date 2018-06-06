@@ -47,7 +47,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
 
         [HttpGet("getByClientId")]
         [SwaggerOperation("GetRolesByClientId")]
-        [ProducesResponseType(typeof(UserRoleModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<UserRoleModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetRolesByClientId(string clientId)
         {
             if (string.IsNullOrEmpty(clientId))
@@ -71,7 +71,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         }
 
         [HttpPost("updateRole")]
-        [SwaggerOperation("SaveUserRole")]
+        [SwaggerOperation("UpdateUserRole")]
         [ProducesResponseType(typeof(UserRoleModel), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> UpdateUserRole([FromBody] UserRoleUpdateModel role)
         {
@@ -108,7 +108,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
 
         [HttpGet("verifyRole")]
         [SwaggerOperation("VerifyUserRole")]
-        [ProducesResponseType(typeof(UserRoleModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> VerifyUserRole(string clientId)
         {
             if (string.IsNullOrEmpty(clientId))
