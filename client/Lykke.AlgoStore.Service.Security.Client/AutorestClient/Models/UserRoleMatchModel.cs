@@ -9,23 +9,23 @@ namespace Lykke.Service.Security.Client.AutorestClient.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class IssueIndicator
+    public partial class UserRoleMatchModel
     {
         /// <summary>
-        /// Initializes a new instance of the IssueIndicator class.
+        /// Initializes a new instance of the UserRoleMatchModel class.
         /// </summary>
-        public IssueIndicator()
+        public UserRoleMatchModel()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the IssueIndicator class.
+        /// Initializes a new instance of the UserRoleMatchModel class.
         /// </summary>
-        public IssueIndicator(string type = default(string), string value = default(string))
+        public UserRoleMatchModel(string clientId = default(string), string roleId = default(string))
         {
-            Type = type;
-            Value = value;
+            ClientId = clientId;
+            RoleId = roleId;
             CustomInit();
         }
 
@@ -36,13 +36,13 @@ namespace Lykke.Service.Security.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "type")]
-        public string Type { get; set; }
+        [JsonProperty(PropertyName = "ClientId")]
+        public string ClientId { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "value")]
-        public string Value { get; set; }
+        [JsonProperty(PropertyName = "RoleId")]
+        public string RoleId { get; set; }
 
     }
 }

@@ -11,23 +11,24 @@ namespace Lykke.Service.Security.Client.AutorestClient.Models
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class ErrorResponse
+    public partial class UserRoleModel
     {
         /// <summary>
-        /// Initializes a new instance of the ErrorResponse class.
+        /// Initializes a new instance of the UserRoleModel class.
         /// </summary>
-        public ErrorResponse()
+        public UserRoleModel()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the ErrorResponse class.
+        /// Initializes a new instance of the UserRoleModel class.
         /// </summary>
-        public ErrorResponse(string errorMessage = default(string), IDictionary<string, IList<string>> modelErrors = default(IDictionary<string, IList<string>>))
+        public UserRoleModel(string id = default(string), string name = default(string), IList<UserPermissionModel> permissions = default(IList<UserPermissionModel>))
         {
-            ErrorMessage = errorMessage;
-            ModelErrors = modelErrors;
+            Id = id;
+            Name = name;
+            Permissions = permissions;
             CustomInit();
         }
 
@@ -38,13 +39,18 @@ namespace Lykke.Service.Security.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "ErrorMessage")]
-        public string ErrorMessage { get; set; }
+        [JsonProperty(PropertyName = "Id")]
+        public string Id { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "ModelErrors")]
-        public IDictionary<string, IList<string>> ModelErrors { get; set; }
+        [JsonProperty(PropertyName = "Name")]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "Permissions")]
+        public IList<UserPermissionModel> Permissions { get; set; }
 
     }
 }
