@@ -7,30 +7,27 @@
 namespace Lykke.Service.Security.Client.AutorestClient.Models
 {
     using Newtonsoft.Json;
-    using System.Collections;
-    using System.Collections.Generic;
     using System.Linq;
 
-    public partial class IsAliveResponse
+    public partial class UserRoleUpdateModel
     {
         /// <summary>
-        /// Initializes a new instance of the IsAliveResponse class.
+        /// Initializes a new instance of the UserRoleUpdateModel class.
         /// </summary>
-        public IsAliveResponse()
+        public UserRoleUpdateModel()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the IsAliveResponse class.
+        /// Initializes a new instance of the UserRoleUpdateModel class.
         /// </summary>
-        public IsAliveResponse(bool isDebug, string name = default(string), string version = default(string), string env = default(string), IList<IssueIndicator> issueIndicators = default(IList<IssueIndicator>))
+        public UserRoleUpdateModel(bool canBeModified, bool canBeDeleted, string id = default(string), string name = default(string))
         {
+            Id = id;
             Name = name;
-            Version = version;
-            Env = env;
-            IsDebug = isDebug;
-            IssueIndicators = issueIndicators;
+            CanBeModified = canBeModified;
+            CanBeDeleted = canBeDeleted;
             CustomInit();
         }
 
@@ -41,28 +38,23 @@ namespace Lykke.Service.Security.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "name")]
+        [JsonProperty(PropertyName = "Id")]
+        public string Id { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "Name")]
         public string Name { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "version")]
-        public string Version { get; set; }
+        [JsonProperty(PropertyName = "CanBeModified")]
+        public bool CanBeModified { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "env")]
-        public string Env { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "isDebug")]
-        public bool IsDebug { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "issueIndicators")]
-        public IList<IssueIndicator> IssueIndicators { get; set; }
+        [JsonProperty(PropertyName = "CanBeDeleted")]
+        public bool CanBeDeleted { get; set; }
 
         /// <summary>
         /// Validate the object.
@@ -72,6 +64,7 @@ namespace Lykke.Service.Security.Client.AutorestClient.Models
         /// </exception>
         public virtual void Validate()
         {
+            //Nothing to validate
         }
     }
 }
