@@ -34,74 +34,74 @@ namespace Lykke.AlgoStore.Service.Security.Client
             return await _service.GetPermissionsByRoleIdAsync(roleId);
         }
 
-        public async Task AssignMultiplePermissionToRole(List<RolePermissionMatchModel> permissions)
+        public async Task AssignMultiplePermissionToRoleAsync(List<RolePermissionMatchModel> permissions)
         {
             await _service.AssignMultiplePermissionToRoleAsync(permissions);
         }
 
-        public async Task RevokeMultiplePermissions(List<RolePermissionMatchModel> role)
+        public async Task RevokeMultiplePermissionsAsync(List<RolePermissionMatchModel> role)
         {
             await _service.RevokeMultiplePermissionsAsync(role);
         }
 
-        public async Task<bool> HasPermission(string clientId, string permissionId)
+        public async Task<bool> HasPermissionAsync(string clientId, string permissionId)
         {
             var result = await _service.HasPermissionAsync(clientId, permissionId);
 
             return result.HasValue && result.Value;
         }
 
-        public async Task<IEnumerable<UserRoleModel>> GetAllUserRoles()
+        public async Task<IEnumerable<UserRoleModel>> GetAllUserRolesAsync()
         {
             return await _service.GetAllUserRolesAsync();
         }
 
-        public async Task<UserRoleModel> GetRoleById(string roleId)
+        public async Task<UserRoleModel> GetRoleByIdAsync(string roleId)
         {
             return await _service.GetRoleByIdAsync(roleId);
         }
 
-        public async Task<IEnumerable<UserRoleModel>> GetRolesByClientId(string clientId)
+        public async Task<IEnumerable<UserRoleModel>> GetRolesByClientIdAsync(string clientId)
         {
             return await _service.GetRolesByClientIdAsync(clientId);
         }
 
-        public async Task<UserRoleModel> SaveUserRole(UserRoleModel role)
+        public async Task<UserRoleModel> SaveUserRoleAsync(UserRoleModel role)
         {
             return await _service.SaveUserRoleAsync(role);
         }
 
-        public async Task<UserRoleModel> UpdateUserRole(UserRoleUpdateModel role)
+        public async Task<UserRoleModel> UpdateUserRoleAsync(UserRoleUpdateModel role)
         {
             return await _service.UpdateUserRoleAsync(role);
         }
 
-        public async Task AssignUserRole(UserRoleMatchModel role)
+        public async Task AssignUserRoleAsync(UserRoleMatchModel role)
         {
             await _service.AssignUserRoleAsync(role);
         }
 
-        public async Task RevokeRoleFromUser(UserRoleMatchModel role)
+        public async Task RevokeRoleFromUserAsync(UserRoleMatchModel role)
         {
             await _service.RevokeRoleFromUserAsync(role);
         }
 
-        public async Task VerifyUserRole(string clientId)
+        public async Task VerifyUserRoleAsync(string clientId)
         {
             await _service.VerifyUserRoleAsync(clientId);
         }
 
-        public async Task DeleteUserRole(string roleId)
+        public async Task DeleteUserRoleAsync(string roleId)
         {
             await _service.DeleteUserRoleAsync(roleId);
         }
 
-        public async Task<IEnumerable<AlgoStoreUserData>> GetAllUsersWithRoles()
+        public async Task<IEnumerable<AlgoStoreUserData>> GetAllUsersWithRolesAsync()
         {
             return await _service.GetAllUsersWithRolesAsync();
         }
 
-        public async Task<AlgoStoreUserData> GetUserByIdWithRoles(string clientId)
+        public async Task<AlgoStoreUserData> GetUserByIdWithRolesAsync(string clientId)
         {
             return await _service.GetUserByIdWithRolesAsync(clientId);
         }
