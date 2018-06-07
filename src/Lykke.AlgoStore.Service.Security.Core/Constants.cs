@@ -2,6 +2,6 @@
 {
     public static class Constants
     {
-        public const string ProcessName = "Lykke.AlgoStore.Service.Security";
+        public const string ComponentName = "Lykke.AlgoStore.Service.Security";
     }
 }

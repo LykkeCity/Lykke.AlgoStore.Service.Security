@@ -9,23 +9,24 @@ namespace Lykke.Service.Security.Client.AutorestClient.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class IssueIndicator
+    public partial class UserPermissionData
     {
         /// <summary>
-        /// Initializes a new instance of the IssueIndicator class.
+        /// Initializes a new instance of the UserPermissionData class.
         /// </summary>
-        public IssueIndicator()
+        public UserPermissionData()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the IssueIndicator class.
+        /// Initializes a new instance of the UserPermissionData class.
         /// </summary>
-        public IssueIndicator(string type = default(string), string value = default(string))
+        public UserPermissionData(string id = default(string), string name = default(string), string displayName = default(string))
         {
-            Type = type;
-            Value = value;
+            Id = id;
+            Name = name;
+            DisplayName = displayName;
             CustomInit();
         }
 
@@ -36,13 +37,18 @@ namespace Lykke.Service.Security.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "type")]
-        public string Type { get; set; }
+        [JsonProperty(PropertyName = "Id")]
+        public string Id { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "value")]
-        public string Value { get; set; }
+        [JsonProperty(PropertyName = "Name")]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "DisplayName")]
+        public string DisplayName { get; set; }
 
     }
 }

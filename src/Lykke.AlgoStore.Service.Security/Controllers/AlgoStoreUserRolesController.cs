@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Services;
 using Lykke.AlgoStore.Service.Security.Models;
+using Lykke.AlgoStore.Service.Security.Services.Strings;
 using Lykke.Common.Api.Contract.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -46,11 +47,11 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
 
         [HttpGet("getByClientId")]
         [SwaggerOperation("GetRolesByClientId")]
-        [ProducesResponseType(typeof(UserRoleModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<UserRoleModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetRolesByClientId(string clientId)
         {
             if (string.IsNullOrEmpty(clientId))
-                return BadRequest(ErrorResponse.Create("Client Id cannot be empty"));
+                return BadRequest(ErrorResponse.Create(Phrases.ClientIdEmpty));
 
             var result = await _userRolesService.GetRolesByClientIdAsync(clientId);
 
@@ -70,7 +71,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         }
 
         [HttpPost("updateRole")]
-        [SwaggerOperation("SaveUserRole")]
+        [SwaggerOperation("UpdateUserRole")]
         [ProducesResponseType(typeof(UserRoleModel), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> UpdateUserRole([FromBody] UserRoleUpdateModel role)
         {
@@ -107,11 +108,11 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
 
         [HttpGet("verifyRole")]
         [SwaggerOperation("VerifyUserRole")]
-        [ProducesResponseType(typeof(UserRoleModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> VerifyUserRole(string clientId)
         {
             if (string.IsNullOrEmpty(clientId))
-                return BadRequest(ErrorResponse.Create("Client Id cannot be empty"));
+                return BadRequest(ErrorResponse.Create(Phrases.ClientIdEmpty));
 
             await _userRolesService.VerifyUserRole(clientId);
 
