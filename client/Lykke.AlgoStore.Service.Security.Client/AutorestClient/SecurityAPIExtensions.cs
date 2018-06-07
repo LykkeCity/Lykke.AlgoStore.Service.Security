@@ -412,7 +412,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
             /// </param>
             /// <param name='clientId'>
             /// </param>
-            public static IList<AlgoStoreUserData> GetUserByIdWithRoles(this ISecurityAPI operations, string clientId = default(string))
+            public static AlgoStoreUserData GetUserByIdWithRoles(this ISecurityAPI operations, string clientId = default(string))
             {
                 return operations.GetUserByIdWithRolesAsync(clientId).GetAwaiter().GetResult();
             }
@@ -425,7 +425,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<IList<AlgoStoreUserData>> GetUserByIdWithRolesAsync(this ISecurityAPI operations, string clientId = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<AlgoStoreUserData> GetUserByIdWithRolesAsync(this ISecurityAPI operations, string clientId = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.GetUserByIdWithRolesWithHttpMessagesAsync(clientId, null, cancellationToken).ConfigureAwait(false))
                 {

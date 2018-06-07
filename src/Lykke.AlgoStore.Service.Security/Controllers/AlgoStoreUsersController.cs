@@ -32,7 +32,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
 
         [HttpGet("getByIdWithRoles")]
         [SwaggerOperation("GetUserByIdWithRoles")]
-        [ProducesResponseType(typeof(List<AlgoStoreUserData>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(AlgoStoreUserData), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetUserByIdWithRoles(string clientId)
         {
             if (string.IsNullOrEmpty(clientId))

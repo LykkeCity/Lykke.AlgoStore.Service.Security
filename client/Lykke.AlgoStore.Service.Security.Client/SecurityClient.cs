@@ -101,7 +101,7 @@ namespace Lykke.AlgoStore.Service.Security.Client
             return await _service.GetAllUsersWithRolesAsync();
         }
 
-        public async Task<IEnumerable<AlgoStoreUserData>> GetUserByIdWithRoles(string clientId)
+        public async Task<AlgoStoreUserData> GetUserByIdWithRoles(string clientId)
         {
             return await _service.GetUserByIdWithRolesAsync(clientId);
         }

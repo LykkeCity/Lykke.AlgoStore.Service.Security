@@ -2053,7 +2053,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<HttpOperationResponse<IList<AlgoStoreUserData>>> GetUserByIdWithRolesWithHttpMessagesAsync(string clientId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationResponse<AlgoStoreUserData>> GetUserByIdWithRolesWithHttpMessagesAsync(string clientId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             // Tracing
             bool _shouldTrace = ServiceClientTracing.IsEnabled;
@@ -2137,7 +2137,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
                 throw ex;
             }
             // Create Result
-            var _result = new HttpOperationResponse<IList<AlgoStoreUserData>>();
+            var _result = new HttpOperationResponse<AlgoStoreUserData>();
             _result.Request = _httpRequest;
             _result.Response = _httpResponse;
             // Deserialize Response
@@ -2146,7 +2146,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
                 _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 try
                 {
-                    _result.Body = SafeJsonConvert.DeserializeObject<IList<AlgoStoreUserData>>(_responseContent, DeserializationSettings);
+                    _result.Body = SafeJsonConvert.DeserializeObject<AlgoStoreUserData>(_responseContent, DeserializationSettings);
                 }
                 catch (JsonException ex)
                 {

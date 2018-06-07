@@ -122,6 +122,6 @@ namespace Lykke.AlgoStore.Service.Security.Client
         /// </summary>
         /// <param name="clientId">Client Id</param>
         /// <returns>User with roles</returns>
-        Task<IEnumerable<AlgoStoreUserData>> GetUserByIdWithRoles(string clientId);
+        Task<AlgoStoreUserData> GetUserByIdWithRoles(string clientId);
     }
 }
