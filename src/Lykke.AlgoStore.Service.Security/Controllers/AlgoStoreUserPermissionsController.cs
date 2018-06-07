@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Common.Log;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Services;
+using Lykke.AlgoStore.Service.Security.Core.Utils;
 using Lykke.AlgoStore.Service.Security.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -13,10 +15,12 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
     public class AlgoStoreUserPermissionsController : Controller
     {
         private readonly IUserPermissionsService _permissionsService;
+        private readonly ILog _log;
 
-        public AlgoStoreUserPermissionsController(IUserPermissionsService permissionsService)
+        public AlgoStoreUserPermissionsController(IUserPermissionsService permissionsService, ILog log)
         {
             _permissionsService = permissionsService;
+            _log = log;
         }
 
         [HttpGet("getAll")]
@@ -24,7 +28,8 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         [ProducesResponseType(typeof(List<UserPermissionModel>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetAllPermissions()
         {
-            var result = await _permissionsService.GetAllPermissionsAsync();
+            var result =
+                await _log.LogElapsedTime(null, async () => await _permissionsService.GetAllPermissionsAsync());
 
             return Ok(result);
         }
@@ -35,7 +40,8 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetPermissionById(string permissionId)
         {
-            var result = await _permissionsService.GetPermissionByIdAsync(permissionId);
+            var result = 
+                await _log.LogElapsedTime(null, async () => await _permissionsService.GetPermissionByIdAsync(permissionId));
 
             if (result == null)
                 return NotFound();
@@ -48,7 +54,8 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         [ProducesResponseType(typeof(List<UserPermissionModel>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetPermissionsByRoleId(string roleId)
         {
-            var result = await _permissionsService.GetPermissionsByRoleIdAsync(roleId);
+            var result =
+                await _log.LogElapsedTime(null, async () => await _permissionsService.GetPermissionsByRoleIdAsync(roleId));
 
             return Ok(result);
         }
@@ -61,7 +68,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         {
             var data = AutoMapper.Mapper.Map<List<RolePermissionMatchData>>(permissions);
 
-            await _permissionsService.AssignPermissionsToRoleAsync(data);
+            await _log.LogElapsedTime(null, async () => await _permissionsService.AssignPermissionsToRoleAsync(data));
 
             return NoContent();
         }
@@ -73,7 +80,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         {
             var data = AutoMapper.Mapper.Map<List<RolePermissionMatchData>>(role);
 
-            await _permissionsService.RevokePermissionsFromRole(data);
+            await _log.LogElapsedTime(null, async () => await _permissionsService.RevokePermissionsFromRole(data));
 
             return NoContent();
         }
@@ -83,7 +90,8 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> HasPermission(string clientId, string permissionId)
         {
-            var result = await _permissionsService.HasPermission(clientId, permissionId);
+            var result =
+                await _log.LogElapsedTime(null, async () => await _permissionsService.HasPermission(clientId, permissionId));
 
             return Ok(result);
         }

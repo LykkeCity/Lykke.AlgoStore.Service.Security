@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Common.Log;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Services;
+using Lykke.AlgoStore.Service.Security.Core.Utils;
 using Lykke.AlgoStore.Service.Security.Models;
 using Lykke.AlgoStore.Service.Security.Services.Strings;
 using Lykke.Common.Api.Contract.Responses;
@@ -15,11 +17,12 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
     public class AlgoStoreUserRolesController: Controller
     {
         private readonly IUserRolesService _userRolesService;
+        private readonly ILog _log;
 
-        public AlgoStoreUserRolesController(
-            IUserRolesService userRolesService)
+        public AlgoStoreUserRolesController(IUserRolesService userRolesService, ILog log)
         {
             _userRolesService = userRolesService;
+            _log = log;
         }
 
         [HttpGet("getAll")]
@@ -27,7 +30,9 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         [ProducesResponseType(typeof(List<UserRoleModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetAllUserRoles()
         {
-            var result = await _userRolesService.GetAllRolesAsync();
+            var result =
+                await _log.LogElapsedTime(null, async () => await _userRolesService.GetAllRolesAsync());
+
             return Ok(result);
         }
 
@@ -37,7 +42,8 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetRoleById(string roleId)
         {
-            var result = await _userRolesService.GetRoleByIdAsync(roleId);
+            var result =
+                await _log.LogElapsedTime(null, async () => await _userRolesService.GetRoleByIdAsync(roleId));
 
             if (result == null)
                 return NotFound();
@@ -53,7 +59,8 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
             if (string.IsNullOrEmpty(clientId))
                 return BadRequest(ErrorResponse.Create(Phrases.ClientIdEmpty));
 
-            var result = await _userRolesService.GetRolesByClientIdAsync(clientId);
+            var result =
+                await _log.LogElapsedTime(null, async () => await _userRolesService.GetRolesByClientIdAsync(clientId));
 
             return Ok(result);
         }
@@ -65,7 +72,8 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         {
             var data = AutoMapper.Mapper.Map<UserRoleData>(role);
 
-            var result = await _userRolesService.SaveRoleAsync(data);
+            var result =
+                await _log.LogElapsedTime(null, async () => await _userRolesService.SaveRoleAsync(data));
 
             return Ok(result);
         }
@@ -77,7 +85,8 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         {
             var data = AutoMapper.Mapper.Map<UserRoleData>(role);
 
-            var result = await _userRolesService.SaveRoleAsync(data);
+            var result =
+                await _log.LogElapsedTime(null, async () => await _userRolesService.SaveRoleAsync(data));
 
             return Ok(result);
         }
@@ -89,7 +98,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         {
             var data = AutoMapper.Mapper.Map<UserRoleMatchData>(role);
 
-            await _userRolesService.AssignRoleToUser(data);
+            await _log.LogElapsedTime(null, async () => await _userRolesService.AssignRoleToUser(data));
 
             return NoContent();
         }
@@ -101,7 +110,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         {
             var data = AutoMapper.Mapper.Map<UserRoleMatchData>(role);
 
-            await _userRolesService.RevokeRoleFromUser(data);
+            await _log.LogElapsedTime(null, async () => await _userRolesService.RevokeRoleFromUser(data));
 
             return NoContent();
         }
@@ -114,7 +123,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
             if (string.IsNullOrEmpty(clientId))
                 return BadRequest(ErrorResponse.Create(Phrases.ClientIdEmpty));
 
-            await _userRolesService.VerifyUserRole(clientId);
+            await _log.LogElapsedTime(null, async () => await _userRolesService.VerifyUserRole(clientId));
 
             return Ok();
         }
@@ -124,7 +133,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeleteUserRole(string roleId)
         {
-            await _userRolesService.DeleteRoleAsync(roleId);
+            await _log.LogElapsedTime(null, async () => await _userRolesService.DeleteRoleAsync(roleId));
 
             return NoContent();
         }
