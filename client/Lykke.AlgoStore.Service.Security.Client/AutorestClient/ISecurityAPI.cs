@@ -94,6 +94,16 @@ namespace Lykke.Service.Security.Client.AutorestClient
         /// </param>
         Task<HttpOperationResponse<bool?>> HasPermissionWithHttpMessagesAsync(string clientId = default(string), string permissionId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
+        /// <param name='permissions'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<bool?>> SeedPermissionsWithHttpMessagesAsync(IList<UserPermissionData> permissions = default(IList<UserPermissionData>), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
         /// <param name='customHeaders'>
         /// The headers that will be added to request.
         /// </param>
@@ -181,6 +191,16 @@ namespace Lykke.Service.Security.Client.AutorestClient
         /// The cancellation token.
         /// </param>
         Task<HttpOperationResponse> DeleteUserRoleWithHttpMessagesAsync(string roleId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='permissions'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<bool?>> SeedRolesWithHttpMessagesAsync(IList<UserPermissionData> permissions = default(IList<UserPermissionData>), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='customHeaders'>
         /// The headers that will be added to request.

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Lykke.AlgoStore.Service.Security.Core;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Repositories;
 using Lykke.AlgoStore.Service.Security.Core.Services;
@@ -143,5 +144,108 @@ namespace Lykke.AlgoStore.Service.Security.Services
 
             return userRoles.Any(x => x.Permissions.Any(y => y.Id == permissionId));
         }
+
+        public async Task SeedPermissions(List<UserPermissionData> permissions)
+        {
+            // check if we should delete any old permissions
+            var allPermissions = await GetAllPermissionsAsync();
+
+            var permissionsToDelete = allPermissions
+                .Where(x => !permissions.Any(y => y.Name == x.Name && y.Id == x.Id)) //Must compare by Id and Name
+                .ToList();
+
+            if (permissionsToDelete.Any())
+            {
+                var allRoles = await _userRolesService.GetAllRolesAsync();
+
+                // delete old unneeded permissions
+                foreach (var permissionToDelete in permissionsToDelete)
+                {
+                    // first check if the permission has been referenced in any role
+                    var matches = allRoles.Where(role =>
+                            role.Permissions.Any(
+                                p => p.Id == permissionToDelete.Id && p.Name == permissionToDelete.Name))
+                        .ToList();
+
+                    // if the permission is referenced, remove the reference
+                    if (matches.Any())
+                    {
+                        foreach (var reference in matches)
+                        {
+                            await _rolePermissionMatchRepository.RevokePermission(new RolePermissionMatchData()
+                            {
+                                RoleId = reference.Id,
+                                PermissionId = permissionToDelete.Id
+                            });
+                        }
+                    }
+
+                    // finally delete the permission
+                    await DeletePermissionAsync(permissionToDelete.Id);
+                }
+            }
+
+            // refresh current permissions
+            foreach (var permission in permissions)
+            {
+                await SavePermissionAsync(permission);
+            }
+        }
+
+        //public async Task SeedRoles(List<UserPermissionData> permissions)
+        //{
+        //    var allRoles = await _userRolesService.GetAllRolesAsync();
+
+        //    // Check if administrator role exists, if not - seed it
+        //    // Note: Only the original administrator role cannot be deleted
+        //    var adminRole =
+        //        allRoles.FirstOrDefault(role => role.Name == Constants.AdminRoleName && !role.CanBeDeleted);
+
+        //    // If there is no administrator role, we need to seed it
+        //    if (adminRole == null)
+        //    {
+        //        adminRole = new UserRoleData()
+        //        {
+        //            Id = Guid.NewGuid().ToString(),
+        //            Name = Constants.AdminRoleName,
+        //            CanBeDeleted = false,
+        //            CanBeModified = false
+        //        };
+
+        //        // Create the administrator role
+        //        await _userRolesService.SaveRoleAsync(adminRole);
+        //    }
+
+        //    // Check if user role exists, if not - seed it. Don't touch it if it exists
+        //    // Note: Only the original user role cannot be deleted
+        //    var userRole =
+        //        allRoles.FirstOrDefault(role => role.Name == Constants.UserRoleName && !role.CanBeDeleted);
+
+        //    if (userRole == null)
+        //    {
+        //        userRole = new UserRoleData()
+        //        {
+        //            Id = Guid.NewGuid().ToString(),
+        //            Name = Constants.UserRoleName,
+        //            CanBeDeleted = false,
+        //            CanBeModified = true
+        //        };
+
+        //        // Create the User role
+        //        await _userRolesService.SaveRoleAsync(userRole);
+        //    }
+
+        //    // Seed the permissions for the administrator role
+        //    foreach (var permission in permissions)
+        //    {
+        //        var match = new RolePermissionMatchData()
+        //        {
+        //            RoleId = adminRole.Id,
+        //            PermissionId = permission.Id
+        //        };
+
+        //        await _rolePermissionMatchRepository.AssignPermissionToRoleAsync(match);
+        //    }
+        //}
     }
 }

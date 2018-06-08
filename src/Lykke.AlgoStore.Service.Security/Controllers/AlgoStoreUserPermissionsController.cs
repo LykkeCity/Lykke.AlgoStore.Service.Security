@@ -95,5 +95,15 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("seedPermissions")]
+        [SwaggerOperation("SeedPermissions")]
+        [ProducesResponseType(typeof(bool), (int) HttpStatusCode.OK)]
+        public async Task<IActionResult> SeedPermissions([FromBody] List<UserPermissionData> permissions)
+        {
+            await _permissionsService.SeedPermissions(permissions);
+
+            return Ok();
+        }
     }
 }

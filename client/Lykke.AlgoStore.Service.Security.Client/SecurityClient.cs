@@ -106,6 +106,16 @@ namespace Lykke.AlgoStore.Service.Security.Client
             return await _service.GetUserByIdWithRolesAsync(clientId);
         }
 
+        public async Task SeedPermissions(List<UserPermissionData> permissions)
+        {
+            await _service.SeedPermissionsAsync(permissions);
+        }
+
+        public async Task SeedRoles(List<UserPermissionData> permissions)
+        {
+            await _service.SeedRolesAsync(permissions);
+        }
+
         public void Dispose()
         {
             if (_service == null)

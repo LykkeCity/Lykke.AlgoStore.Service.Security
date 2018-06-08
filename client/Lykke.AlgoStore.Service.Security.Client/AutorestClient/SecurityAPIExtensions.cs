@@ -170,6 +170,32 @@ namespace Lykke.Service.Security.Client.AutorestClient
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
+            /// <param name='permissions'>
+            /// </param>
+            public static bool? SeedPermissions(this ISecurityAPI operations, IList<UserPermissionData> permissions = default(IList<UserPermissionData>))
+            {
+                return operations.SeedPermissionsAsync(permissions).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='permissions'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<bool?> SeedPermissionsAsync(this ISecurityAPI operations, IList<UserPermissionData> permissions = default(IList<UserPermissionData>), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.SeedPermissionsWithHttpMessagesAsync(permissions, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
             public static IList<UserRoleModel> GetAllUserRoles(this ISecurityAPI operations)
             {
                 return operations.GetAllUserRolesAsync().GetAwaiter().GetResult();
@@ -383,6 +409,32 @@ namespace Lykke.Service.Security.Client.AutorestClient
             public static async Task DeleteUserRoleAsync(this ISecurityAPI operations, string roleId = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
                 (await operations.DeleteUserRoleWithHttpMessagesAsync(roleId, null, cancellationToken).ConfigureAwait(false)).Dispose();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='permissions'>
+            /// </param>
+            public static bool? SeedRoles(this ISecurityAPI operations, IList<UserPermissionData> permissions = default(IList<UserPermissionData>))
+            {
+                return operations.SeedRolesAsync(permissions).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='permissions'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<bool?> SeedRolesAsync(this ISecurityAPI operations, IList<UserPermissionData> permissions = default(IList<UserPermissionData>), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.SeedRolesWithHttpMessagesAsync(permissions, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
             }
 
             /// <param name='operations'>

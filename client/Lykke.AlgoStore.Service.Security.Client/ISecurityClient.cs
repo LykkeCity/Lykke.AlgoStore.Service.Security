@@ -123,5 +123,19 @@ namespace Lykke.AlgoStore.Service.Security.Client
         /// <param name="clientId">Client Id</param>
         /// <returns>User with roles</returns>
         Task<AlgoStoreUserData> GetUserByIdWithRolesAsync(string clientId);
+
+        /// <summary>
+        /// Seed permissions
+        /// </summary>
+        /// <param name="permissions">Permissions to use for seeding</param>
+        /// <returns></returns>
+        Task SeedPermissions(List<UserPermissionData> permissions);
+
+        /// <summary>
+        /// Seed roles
+        /// </summary>
+        /// <param name="permissions">Permission to use for roles seeding</param>
+        /// <returns></returns>
+        Task SeedRoles(List<UserPermissionData> permissions);
     }
 }

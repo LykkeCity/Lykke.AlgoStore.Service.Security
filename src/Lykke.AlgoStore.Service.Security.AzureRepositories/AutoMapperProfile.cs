@@ -9,7 +9,7 @@ namespace Lykke.AlgoStore.Service.Security.AzureRepositories
     {
         public AutoMapperProfile()
         {
-            //To entitites
+            //To entities
             CreateMap<RolePermissionMatchData, RolePermissionMatchEntity>()
                 .ForMember(dest => dest.PartitionKey, opt => opt.MapFrom(src => src.RoleId))
                 .ForMember(dest => dest.RowKey, opt => opt.MapFrom(src => src.PermissionId))
@@ -41,7 +41,7 @@ namespace Lykke.AlgoStore.Service.Security.AzureRepositories
                 }
             });
 
-            //From entitites
+            //From entities
             CreateMap<RolePermissionMatchEntity, RolePermissionMatchData>()
                 .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.PartitionKey))
                 .ForMember(dest => dest.PermissionId, opt => opt.MapFrom(src => src.RowKey));

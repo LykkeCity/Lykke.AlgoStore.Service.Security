@@ -16,5 +16,6 @@ namespace Lykke.AlgoStore.Service.Security.Core.Services
         Task RevokeRoleFromUser(UserRoleMatchData data);
         Task VerifyUserRole(string clientId);
         Task DeleteRoleAsync(string roleId);
+        Task SeedRoles(List<UserPermissionData> permissions);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Lykke.AlgoStore.Service.Security.Core;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Repositories;
 using Lykke.AlgoStore.Service.Security.Core.Services;
@@ -265,6 +266,62 @@ namespace Lykke.AlgoStore.Service.Security.Services
                 throw new ValidationException(Phrases.RoleIsImmutable);
 
             await _rolesRepository.DeleteRoleAsync(role);
+        }
+
+        public async Task SeedRoles(List<UserPermissionData> permissions)
+        {
+            var allRoles = await GetAllRolesAsync();
+
+            // Check if administrator role exists, if not - seed it
+            // Note: Only the original administrator role cannot be deleted
+            var adminRole =
+                allRoles.FirstOrDefault(role => role.Name == Constants.AdminRoleName && !role.CanBeDeleted);
+
+            // If there is no administrator role, we need to seed it
+            if (adminRole == null)
+            {
+                adminRole = new UserRoleData()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Name = Constants.AdminRoleName,
+                    CanBeDeleted = false,
+                    CanBeModified = false
+                };
+
+                // Create the administrator role
+                await SaveRoleAsync(adminRole);
+            }
+
+            // Check if user role exists, if not - seed it. Don't touch it if it exists
+            // Note: Only the original user role cannot be deleted
+            var userRole =
+                allRoles.FirstOrDefault(role => role.Name == Constants.UserRoleName && !role.CanBeDeleted);
+
+            if (userRole == null)
+            {
+                userRole = new UserRoleData()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Name = Constants.UserRoleName,
+                    CanBeDeleted = false,
+                    CanBeModified = true
+                };
+
+                // Create the User role
+                await SaveRoleAsync(userRole);
+            }
+
+            // Seed the permissions for the administrator role
+            foreach (var permission in permissions)
+            {
+                var match = new RolePermissionMatchData()
+                {
+                    RoleId = adminRole.Id,
+                    PermissionId = permission.Id
+                };
+
+                await _rolePermissionMatchRepository.AssignPermissionToRoleAsync(match);
+            }
         }
     }
 }

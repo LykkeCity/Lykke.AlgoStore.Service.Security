@@ -121,6 +121,20 @@
             <param name="clientId">Client Id</param>
             <returns>User with roles</returns>
         </member>
+        <member name="M:Lykke.AlgoStore.Service.Security.Client.ISecurityClient.SeedPermissions(System.Collections.Generic.List{Lykke.Service.Security.Client.AutorestClient.Models.UserPermissionData})">
+            <summary>
+            Seed permissions
+            </summary>
+            <param name="permissions">Permissions to use for seeding</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lykke.AlgoStore.Service.Security.Client.ISecurityClient.SeedRoles(System.Collections.Generic.List{Lykke.Service.Security.Client.AutorestClient.Models.UserPermissionData})">
+            <summary>
+            Seed roles
+            </summary>
+            <param name="permissions">Permission to use for roles seeding</param>
+            <returns></returns>
+        </member>
         <member name="T:Lykke.Service.Security.Client.AutorestClient.ISecurityAPI">
             <summary>
             </summary>
@@ -192,6 +206,16 @@
             <param name='clientId'>
             </param>
             <param name='permissionId'>
+            </param>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.Security.Client.AutorestClient.ISecurityAPI.SeedPermissionsWithHttpMessagesAsync(System.Collections.Generic.IList{Lykke.Service.Security.Client.AutorestClient.Models.UserPermissionData},System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <param name='permissions'>
             </param>
             <param name='customHeaders'>
             The headers that will be added to request.
@@ -280,6 +304,16 @@
         </member>
         <member name="M:Lykke.Service.Security.Client.AutorestClient.ISecurityAPI.DeleteUserRoleWithHttpMessagesAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
             <param name='roleId'>
+            </param>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.Security.Client.AutorestClient.ISecurityAPI.SeedRolesWithHttpMessagesAsync(System.Collections.Generic.IList{Lykke.Service.Security.Client.AutorestClient.Models.UserPermissionData},System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <param name='permissions'>
             </param>
             <param name='customHeaders'>
             The headers that will be added to request.
@@ -777,6 +811,25 @@
             A response object containing the response body and response headers.
             </return>
         </member>
+        <member name="M:Lykke.Service.Security.Client.AutorestClient.SecurityAPI.SeedPermissionsWithHttpMessagesAsync(System.Collections.Generic.IList{Lykke.Service.Security.Client.AutorestClient.Models.UserPermissionData},System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <param name='permissions'>
+            </param>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <exception cref="T:Microsoft.Rest.SerializationException">
+            Thrown when unable to deserialize the response
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
         <member name="M:Lykke.Service.Security.Client.AutorestClient.SecurityAPI.GetAllUserRolesWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
             <param name='customHeaders'>
             Headers that will be added to request.
@@ -929,6 +982,25 @@
             </param>
             <exception cref="T:Microsoft.Rest.HttpOperationException">
             Thrown when the operation returned an invalid status code
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.Security.Client.AutorestClient.SecurityAPI.SeedRolesWithHttpMessagesAsync(System.Collections.Generic.IList{Lykke.Service.Security.Client.AutorestClient.Models.UserPermissionData},System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <param name='permissions'>
+            </param>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <exception cref="T:Microsoft.Rest.SerializationException">
+            Thrown when unable to deserialize the response
             </exception>
             <return>
             A response object containing the response body and response headers.
@@ -1097,6 +1169,23 @@
             The cancellation token.
             </param>
         </member>
+        <member name="M:Lykke.Service.Security.Client.AutorestClient.SecurityAPIExtensions.SeedPermissions(Lykke.Service.Security.Client.AutorestClient.ISecurityAPI,System.Collections.Generic.IList{Lykke.Service.Security.Client.AutorestClient.Models.UserPermissionData})">
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='permissions'>
+            </param>
+        </member>
+        <member name="M:Lykke.Service.Security.Client.AutorestClient.SecurityAPIExtensions.SeedPermissionsAsync(Lykke.Service.Security.Client.AutorestClient.ISecurityAPI,System.Collections.Generic.IList{Lykke.Service.Security.Client.AutorestClient.Models.UserPermissionData},System.Threading.CancellationToken)">
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='permissions'>
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
         <member name="M:Lykke.Service.Security.Client.AutorestClient.SecurityAPIExtensions.GetAllUserRoles(Lykke.Service.Security.Client.AutorestClient.ISecurityAPI)">
             <param name='operations'>
             The operations group for this extension method.
@@ -1241,6 +1330,23 @@
             The operations group for this extension method.
             </param>
             <param name='roleId'>
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.Security.Client.AutorestClient.SecurityAPIExtensions.SeedRoles(Lykke.Service.Security.Client.AutorestClient.ISecurityAPI,System.Collections.Generic.IList{Lykke.Service.Security.Client.AutorestClient.Models.UserPermissionData})">
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='permissions'>
+            </param>
+        </member>
+        <member name="M:Lykke.Service.Security.Client.AutorestClient.SecurityAPIExtensions.SeedRolesAsync(Lykke.Service.Security.Client.AutorestClient.ISecurityAPI,System.Collections.Generic.IList{Lykke.Service.Security.Client.AutorestClient.Models.UserPermissionData},System.Threading.CancellationToken)">
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='permissions'>
             </param>
             <param name='cancellationToken'>
             The cancellation token.
