@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using AzureStorage;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Entities;
-using Lykke.AlgoStore.Service.Security.AzureRepositories.Mappers;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Repositories;
 
@@ -24,20 +24,22 @@ namespace Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories
         {
             var result = await _table.GetDataAsync();
 
-            return result.ToModel();
+            return Mapper.Map<List<UserRoleData>>(result);
         }
 
         public async Task<UserRoleData> GetRoleByIdAsync(string roleId)
         {
             var result = await _table.GetDataAsync(roleId);
-            return result.FirstOrDefault()?.ToModel();
+
+            return Mapper.Map<UserRoleData>(result.FirstOrDefault());
         }       
 
         public async Task<UserRoleData> SaveRoleAsync(UserRoleData role)
         {
-            var entity = role.ToEntity();
+            var entity = Mapper.Map<UserRoleEntity>(role);
 
             await _table.InsertOrReplaceAsync(entity);
+
             return role;
         }
 
@@ -50,7 +52,7 @@ namespace Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories
         {
             var result = await _table.GetDataAsync(x => x.RowKey == roleIdOrName || x.PartitionKey == roleIdOrName);
 
-            return result?.Count > 0;
+            return result.Any();
         }
     }
 }

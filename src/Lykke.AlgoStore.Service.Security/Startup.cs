@@ -35,7 +35,7 @@ namespace Lykke.AlgoStore.Service.Security
             Mapper.Initialize(cfg =>
             {
                 cfg.AddProfiles(typeof(AutoMapperProfile));
-
+                cfg.AddProfiles(typeof(AzureRepositories.AutoMapperProfile));
             });
 
             Mapper.AssertConfigurationIsValid();
