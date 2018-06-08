@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoFixture;
-using AzureStorage.Tables;
+using AutoMapper;
+using AzureStorage;
+using FluentAssertions;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Entities;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
-using Lykke.AlgoStore.Service.Security.Tests.Infrastructure;
+using Moq;
 using NUnit.Framework;
 
 namespace Lykke.AlgoStore.Service.Security.Tests.Unit
@@ -12,100 +17,112 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
     [TestFixture]
     public class UserRolesRepositoryTests
     {
-        private UserRoleData _entity;
         private readonly Fixture _fixture = new Fixture();
 
-        private readonly UserRolesRepository _repo = new UserRolesRepository(
-            AzureTableStorage<UserRoleEntity>.Create(SettingsMock.GetTableStorageConnectionString(), UserRolesRepository.TableName,
-                new LogMock()));
+        private readonly Mock<INoSQLTableStorage<UserRoleEntity>> _storage =
+            new Mock<INoSQLTableStorage<UserRoleEntity>>();
+
+        private UserRoleEntity _roleEntity;
+        private UserRoleData _roleData;
+        private IEnumerable<UserRoleEntity> _roleEntities;
+        private IEnumerable<UserRoleData> _rolesData;
 
         [SetUp]
         public void SetUp()
         {
-            _entity = _fixture.Build<UserRoleData>().With(role => role.Id, "TestID").With(role => role.Name, "TestName")
-                .Create();
+            //Reset should not be used in production code. It is intended to support testing scenarios only.
+            Mapper.Reset();
+
+            Mapper.Initialize(cfg => cfg.AddProfile<AzureRepositories.AutoMapperProfile>());
+            Mapper.AssertConfigurationIsValid();
+
+            _roleEntity = _fixture.Build<UserRoleEntity>().Create();
+            _roleData = Mapper.Map<UserRoleData>(_roleEntity);
+
+            _roleEntities = _fixture.Build<UserRoleEntity>().CreateMany();
+            _rolesData = Mapper.Map<List<UserRoleData>>(_roleEntities);
         }
 
         [TearDown]
         public void CleanUp()
         {
-            _repo.DeleteRoleAsync(_entity).Wait();
-            _entity = null;
         }
 
-        [Test, Explicit("Should run manually only. Manipulate data in Table Storage")]
+        [Test]
         public void CreateRoleTest()
         {
-            When_Invoke_Save();
-            Then_Data_ShouldBeSaved();
+            _storage.Setup(x => x.InsertOrReplaceAsync(_roleEntity))
+                .Returns(Task.FromResult(_roleEntity));
+
+            var repo = new UserRolesRepository(_storage.Object);
+
+            var result = repo.SaveRoleAsync(_roleData).Result;
+
+            result.Should().BeEquivalentTo(_roleData);
         }
 
-        [Test, Explicit("Should run manually only. Manipulate data in Table Storage")]
+        [Test]
         public void GetAllRolesTest()
         {
-            When_Invoke_Save();
-            var result = When_Invoke_GetAll();
-            Then_Result_ShouldNotBe_Null(result);
+            _storage.Setup(x => x.GetDataAsync(null))
+                .Returns(() =>
+                {
+                    IList<UserRoleEntity> roles = new List<UserRoleEntity>();
+                    ((List<UserRoleEntity>) roles).AddRange(_roleEntities);
+
+                    return Task.FromResult(roles);
+                });
+
+            var repo = new UserRolesRepository(_storage.Object);
+
+            var result = repo.GetAllRolesAsync().Result;
+
+            //REMARK: For some reason must exclude permissions property from comparison 
+            result.Should().Equal(_rolesData,
+                (x1, x2) => x1.CanBeDeleted == x2.CanBeDeleted && x1.CanBeModified == x2.CanBeModified &&
+                            x1.Id == x2.Id && x1.Name == x2.Name);
         }
 
-        [Test, Explicit("Should run manually only. Manipulate data in Table Storage")]
+        [Test]
         public void GetByIdTest()
         {
-            var result = When_Invoke_GetById();
-            Then_Data_ShouldNotBeNull(result);
+            _storage.Setup(x => x.GetDataAsync(It.IsAny<string>(), It.IsAny<Func<UserRoleEntity, bool>>()))
+                .Returns((string partitionKey, Func<UserRoleEntity, bool> filter) => Task.FromResult(_roleEntities));
+
+            var repo = new UserRolesRepository(_storage.Object);
+
+            var result = repo.GetRoleByIdAsync(_rolesData.First().Id).Result;
+
+            result.Should().BeEquivalentTo(_rolesData.First());
         }
 
-        [Test, Explicit("Should run manually only. Manipulate data in Table Storage")]
+        [Test]
         public void DeleteRoleTest()
         {
-            When_Invoke_DeleteRole();
-            Then_Role_ShouldNotExist();
+            _storage.Setup(x => x.DeleteIfExistAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(true));
+
+            var repo = new UserRolesRepository(_storage.Object);
+
+            repo.DeleteRoleAsync(_roleData).Wait();
         }
 
-        private void Then_Role_ShouldNotExist()
+        [Test]
+        public void RoleExistsTest()
         {
-            var result = _repo.GetRoleByIdAsync(_entity.Id).Result;
-            Assert.IsNull(result);
-        }
+            _storage.Setup(x => x.GetDataAsync(It.IsAny<Func<UserRoleEntity, bool>>()))
+                .Returns((Func<UserRoleEntity, bool> filter) => {
+                    IList<UserRoleEntity> roles = new List<UserRoleEntity>();
+                    ((List<UserRoleEntity>)roles).AddRange(_roleEntities);
 
-        private void When_Invoke_DeleteRole()
-        {
-            _repo.DeleteRoleAsync(_entity).Wait();
-        }
+                    return Task.FromResult(roles);
+                });
 
-        private void Then_Data_ShouldNotBeNull(UserRoleData result)
-        {
-            Assert.NotNull(result);
-        }
+            var repo = new UserRolesRepository(_storage.Object);
 
-        private UserRoleData When_Invoke_GetById()
-        {
-            // be sure the item is here
-            _repo.SaveRoleAsync(_entity).Wait();
+            var result = repo.RoleExistsAsync(_roleData.Id).Result;
 
-            return _repo.GetRoleByIdAsync(_entity.Id).Result;
-        }
-
-        private List<UserRoleData> When_Invoke_GetAll()
-        {
-            return _repo.GetAllRolesAsync().Result;
-        }
-
-        private UserRoleData When_Invoke_Save()
-        {
-            return _repo.SaveRoleAsync(_entity).Result;
-        }
-
-        private void Then_Data_ShouldBeSaved()
-        {
-            var result = _repo.GetRoleByIdAsync(_entity.Id).Result;
-            Assert.NotNull(result);
-        }
-
-        private static void Then_Result_ShouldNotBe_Null(List<UserRoleData> data)
-        {
-            Assert.NotNull(data);
-            Assert.NotZero(data.Count);
+            Assert.IsTrue(result);
         }
     }
 }
