@@ -280,7 +280,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
             // If there is no administrator role, we need to seed it
             if (adminRole == null)
             {
-                adminRole = new UserRoleData()
+                adminRole = new UserRoleData
                 {
                     Id = Guid.NewGuid().ToString(),
                     Name = Constants.AdminRoleName,
@@ -299,7 +299,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
 
             if (userRole == null)
             {
-                userRole = new UserRoleData()
+                userRole = new UserRoleData
                 {
                     Id = Guid.NewGuid().ToString(),
                     Name = Constants.UserRoleName,
@@ -314,7 +314,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
             // Seed the permissions for the administrator role
             foreach (var permission in permissions)
             {
-                var match = new RolePermissionMatchData()
+                var match = new RolePermissionMatchData
                 {
                     RoleId = adminRole.Id,
                     PermissionId = permission.Id

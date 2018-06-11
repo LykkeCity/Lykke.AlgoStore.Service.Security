@@ -171,7 +171,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
                     {
                         foreach (var reference in matches)
                         {
-                            await _rolePermissionMatchRepository.RevokePermissionAsync(new RolePermissionMatchData()
+                            await _rolePermissionMatchRepository.RevokePermissionAsync(new RolePermissionMatchData
                             {
                                 RoleId = reference.Id,
                                 PermissionId = permissionToDelete.Id
