@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoMapper;
 using AzureStorage;
-using AzureStorage.Tables;
 using FluentAssertions;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Entities;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Repositories;
-using Lykke.AlgoStore.Service.Security.Tests.Infrastructure;
 using Moq;
 using NUnit.Framework;
 

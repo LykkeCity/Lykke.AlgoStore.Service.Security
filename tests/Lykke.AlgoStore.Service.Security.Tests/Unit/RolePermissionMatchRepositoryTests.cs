@@ -5,13 +5,11 @@ using System.Threading.Tasks;
 using AutoFixture;
 using AutoMapper;
 using AzureStorage;
-using AzureStorage.Tables;
 using FluentAssertions;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Entities;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Repositories;
-using Lykke.AlgoStore.Service.Security.Tests.Infrastructure;
 using Moq;
 using NUnit.Framework;
 
