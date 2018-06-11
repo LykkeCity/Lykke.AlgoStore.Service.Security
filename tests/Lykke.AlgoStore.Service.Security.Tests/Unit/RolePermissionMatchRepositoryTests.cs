@@ -1,10 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoFixture;
+using AutoMapper;
+using AzureStorage;
 using AzureStorage.Tables;
+using FluentAssertions;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Entities;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
+using Lykke.AlgoStore.Service.Security.Core.Repositories;
 using Lykke.AlgoStore.Service.Security.Tests.Infrastructure;
+using Moq;
 using NUnit.Framework;
 
 namespace Lykke.AlgoStore.Service.Security.Tests.Unit
@@ -12,65 +20,66 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
     [TestFixture]
     public class RolePermissionMatchRepositoryTests
     {
-        private RolePermissionMatchData _entity;
         private readonly Fixture _fixture = new Fixture();
 
-        private readonly RolePermissionMatchRepository _repo = new RolePermissionMatchRepository(
-            AzureTableStorage<RolePermissionMatchEntity>.Create(SettingsMock.GetTableStorageConnectionString(),
-                RolePermissionMatchRepository.TableName, new LogMock()));
+        private readonly Mock<INoSQLTableStorage<RolePermissionMatchEntity>> _storage =
+            new Mock<INoSQLTableStorage<RolePermissionMatchEntity>>();
+
+        private IRolePermissionMatchRepository _repository;
+
+        private RolePermissionMatchData _rolePermissionMatchData;
+        private RolePermissionMatchEntity _rolePermissionMatchEntity;
+        private IEnumerable<RolePermissionMatchData> _rolePermissionMatchesData;
+        private IEnumerable<RolePermissionMatchEntity> _rolePermissionMatchEntities;
 
         [SetUp]
         public void SetUp()
         {
-            _entity = _fixture.Build<RolePermissionMatchData>().With(data => data.RoleId, "TestRoleId")
-                .With(data => data.PermissionId, "TestPermissionId").Create();
+            //Reset should not be used in production code. It is intended to support testing scenarios only.
+            Mapper.Reset();
+
+            Mapper.Initialize(cfg => cfg.AddProfile<AzureRepositories.AutoMapperProfile>());
+            Mapper.AssertConfigurationIsValid();
+
+            _rolePermissionMatchEntity = _fixture.Build<RolePermissionMatchEntity>().Create();
+            _rolePermissionMatchData = Mapper.Map<RolePermissionMatchData>(_rolePermissionMatchEntity);
+
+            _rolePermissionMatchEntities = _fixture.Build<RolePermissionMatchEntity>().CreateMany();
+            _rolePermissionMatchesData = Mapper.Map<List<RolePermissionMatchData>>(_rolePermissionMatchEntities);
+
+            _storage.Setup(x => x.GetDataAsync(It.IsAny<string>(), It.IsAny<Func<RolePermissionMatchEntity, bool>>()))
+                .Returns((string partitionKey, Func<RolePermissionMatchEntity, bool> filter) =>
+                    Task.FromResult(_rolePermissionMatchEntities));
+
+            _storage.Setup(x => x.InsertOrReplaceAsync(_rolePermissionMatchEntity))
+                .Returns(Task.FromResult(_rolePermissionMatchEntity));
+
+            _storage.Setup(x => x.DeleteAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(_rolePermissionMatchEntity));
+
+            _repository = new RolePermissionMatchRepository(_storage.Object);
         }
 
-        [TearDown]
-        public void CleanUp()
-        {
-            _repo.RevokePermission(_entity).Wait();
-            _entity = null;
-        }
-
-        [Test, Explicit("Should run manually only. Manipulate data in Table Storage")]
+        [Test]
         public void GetPermissionsByRoleIdTest()
         {
-            var result = When_Invoke_GetPermissionsByRoleId();
-            Then_Result_ShouldNotBe_Null(result);
+            var result = _repository.GetPermissionIdsByRoleIdAsync(_rolePermissionMatchesData.First().RoleId).Result;
+
+            result.Should().BeEquivalentTo(_rolePermissionMatchesData);
         }
 
-        [Test, Explicit("Should run manually only. Manipulate data in Table Storage")]
+        [Test]
+        public void AssignPermissionToRoleTest()
+        {
+            var result = _repository.AssignPermissionToRoleAsync(_rolePermissionMatchData).Result;
+
+            result.Should().BeEquivalentTo(_rolePermissionMatchData);
+        }
+
+        [Test]
         public void RevokePermissionFromRoleTest()
         {
-            When_Invoke_RevokePermission();
-            Then_Permission_ShouldNotExist();
-        }
-
-        private void Then_Permission_ShouldNotExist()
-        {
-            var result = _repo.GetPermissionIdsByRoleIdAsync(_entity.RoleId).Result;
-            Assert.NotNull(result);
-            Assert.Zero(result.Count);
-        }
-
-        private void When_Invoke_RevokePermission()
-        {
-            _repo.RevokePermission(_entity).Wait();
-        }
-
-        private List<RolePermissionMatchData> When_Invoke_GetPermissionsByRoleId()
-        {
-            // be sure to have a permission
-            _repo.AssignPermissionToRoleAsync(_entity).Wait();
-
-            return _repo.GetPermissionIdsByRoleIdAsync(_entity.RoleId).Result;
-        }
-
-        private static void Then_Result_ShouldNotBe_Null(List<RolePermissionMatchData> data)
-        {
-            Assert.NotNull(data);
-            Assert.NotZero(data.Count);
+            _repository.RevokePermission(_rolePermissionMatchData).Wait();
         }
     }
 }
