@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="6.2.2" />
     <PackageReference Include="Lykke.AzureStorage" Version="8.4.1" />
   </ItemGroup>
 
@@ -17,7 +18,6 @@
 
   <ItemGroup>
     <Folder Include="Entities\" />
-    <Folder Include="Mappers\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
 

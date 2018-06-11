@@ -1,10 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoFixture;
-using AzureStorage.Tables;
+using AutoMapper;
+using AzureStorage;
+using FluentAssertions;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Entities;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
-using Lykke.AlgoStore.Service.Security.Tests.Infrastructure;
+using Lykke.AlgoStore.Service.Security.Core.Repositories;
+using Moq;
 using NUnit.Framework;
 
 namespace Lykke.AlgoStore.Service.Security.Tests.Unit
@@ -12,103 +18,94 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
     [TestFixture]
     public class UserRolesMatchRepositoryTests
     {
-        private const string ClientId = "066ABDEF-F1CB-4B24-8EE6-6ACAF1FD623D";
-        private UserRoleMatchData _entity;
         private readonly Fixture _fixture = new Fixture();
 
-        private readonly UserRolesMatchRepository _repo = new UserRolesMatchRepository(
-            AzureTableStorage<UserRoleMatchEntity>.Create(SettingsMock.GetTableStorageConnectionString(),
-                UserRolesMatchRepository.TableName, new LogMock()));
+        private readonly Mock<INoSQLTableStorage<UserRoleMatchEntity>> _storage =
+            new Mock<INoSQLTableStorage<UserRoleMatchEntity>>();
+
+        private IUserRoleMatchRepository _repository;
+
+        private UserRoleMatchEntity _roleMatchEntity;
+        private UserRoleMatchData _roleMatchData;
+        private IEnumerable<UserRoleMatchEntity> _roleMatchEntities;
+        private IEnumerable<UserRoleMatchData> _roleMatchesData;
 
         [SetUp]
         public void SetUp()
         {
-            _entity = _fixture.Build<UserRoleMatchData>().With(data => data.RoleId, "TestRoleId")
-                .With(data => data.ClientId, ClientId).Create();
+            //Reset should not be used in production code. It is intended to support testing scenarios only.
+            Mapper.Reset();
+
+            Mapper.Initialize(cfg => cfg.AddProfile<AzureRepositories.AutoMapperProfile>());
+            Mapper.AssertConfigurationIsValid();
+
+            _roleMatchEntity = _fixture.Build<UserRoleMatchEntity>().Create();
+            _roleMatchData = Mapper.Map<UserRoleMatchData>(_roleMatchEntity);
+
+            _roleMatchEntities = _fixture.Build<UserRoleMatchEntity>().CreateMany();
+            _roleMatchesData = Mapper.Map<List<UserRoleMatchData>>(_roleMatchEntities);
+
+            _storage.Setup(x => x.GetDataAsync(null))
+                .Returns(() =>
+                {
+                    IList<UserRoleMatchEntity> roleMatchesEntitites = new List<UserRoleMatchEntity>();
+                    ((List<UserRoleMatchEntity>)roleMatchesEntitites).AddRange(_roleMatchEntities);
+
+                    return Task.FromResult(roleMatchesEntitites);
+                });
+
+            _storage.Setup(x => x.InsertOrReplaceAsync(_roleMatchEntity))
+                .Returns(Task.FromResult(_roleMatchEntity));
+
+            _storage.Setup(x => x.GetDataAsync(It.IsAny<string>(), It.IsAny<Func<UserRoleMatchEntity, bool>>()))
+                .Returns((string partitionKey, Func<UserRoleEntity, bool> filter) => Task.FromResult(_roleMatchEntities));
+
+            _storage.Setup(x => x.GetDataAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(_roleMatchEntities.First()));
+
+            _storage.Setup(x => x.DeleteIfExistAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(true));
+
+            _repository = new UserRolesMatchRepository(_storage.Object);
         }
 
-        [TearDown]
-        public void CleanUp()
+        [Test]
+        public void GetAllMatchesTest()
         {
-            _repo.RevokeUserRole(_entity.ClientId, _entity.RoleId).Wait();
-            _entity = null;
+            var result = _repository.GetAllMatchesAsync().Result;
+
+            result.Should().BeEquivalentTo(_roleMatchesData);
         }
 
-        [Test, Explicit("Should run manually only. Manipulate data in Table Storage")]
-        public void AssignUserRoleTest()
+        [Test]
+        public void SaveUserRoleTest()
         {
-            When_Invoke_AssignUserRole();
-            Then_Data_ShouldBeSaved();
+            var result = _repository.SaveUserRoleAsync(_roleMatchData).Result;
+
+            result.Should().BeEquivalentTo(_roleMatchData);
         }
 
-        [Test, Explicit("Should run manually only. Manipulate data in Table Storage")]
+        [Test]
         public void GetUserRolesTest()
         {
-            var result = When_Invoke_GetUserRoles();
-            Then_Result_ShouldNotBe_Null(result);
+            var result = _repository.GetUserRolesAsync(_roleMatchesData.First().ClientId).Result;
+
+            result.Should().BeEquivalentTo(_roleMatchesData);
         }
 
-        [Test, Explicit("Should run manually only. Manipulate data in Table Storage")]
+        [Test]
         public void GetUserRoleTest()
         {
-            var result = When_Invoke_GetUserRole();
-            Then_Data_ShouldNotBeNull(result);
+            var result = _repository
+                .GetUserRoleAsync(_roleMatchesData.First().ClientId, _roleMatchesData.First().RoleId).Result;
+            
+            result.Should().BeEquivalentTo(_roleMatchesData.First());
         }
 
-        [Test, Explicit("Should run manually only. Manipulate data in Table Storage")]
+        [Test]
         public void RevokeUserRoleTest()
         {
-            When_Invoke_RevokeUserRole();
-            Then_Role_ShouldNotExist();
-        }
-
-        private void Then_Role_ShouldNotExist()
-        {
-            var result = _repo.GetUserRoleAsync(_entity.ClientId, _entity.RoleId).Result;
-            Assert.IsNull(result);
-        }
-
-        private void When_Invoke_RevokeUserRole()
-        {
-            _repo.RevokeUserRole(_entity.ClientId, _entity.RoleId).Wait();
-        }
-
-        private void Then_Data_ShouldNotBeNull(UserRoleMatchData result)
-        {
-            Assert.NotNull(result);
-        }
-
-        private UserRoleMatchData When_Invoke_GetUserRole()
-        {
-            // be sure to have a role
-            _repo.SaveUserRoleAsync(_entity).Wait();
-
-            return _repo.GetUserRoleAsync(_entity.ClientId, _entity.RoleId).Result;
-        }
-
-        private List<UserRoleMatchData> When_Invoke_GetUserRoles()
-        {
-            // be sure to have a role
-            _repo.SaveUserRoleAsync(_entity).Wait();
-
-            return _repo.GetUserRolesAsync(_entity.ClientId).Result;
-        }
-
-        private UserRoleMatchData When_Invoke_AssignUserRole()
-        {
-            return _repo.SaveUserRoleAsync(_entity).Result;
-        }
-
-        private void Then_Data_ShouldBeSaved()
-        {
-            var result = _repo.GetUserRoleAsync(_entity.ClientId, _entity.RoleId).Result;
-            Assert.NotNull(result);
-        }
-
-        private static void Then_Result_ShouldNotBe_Null(List<UserRoleMatchData> data)
-        {
-            Assert.NotNull(data);
-            Assert.NotZero(data.Count);
+            _repository.RevokeUserRoleAsync(_roleMatchesData.First().ClientId, _roleMatchesData.First().RoleId).Wait();
         }
     }
 }

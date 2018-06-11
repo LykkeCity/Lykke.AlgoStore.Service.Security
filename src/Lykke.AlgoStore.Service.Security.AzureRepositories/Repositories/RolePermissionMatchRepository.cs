@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using AzureStorage;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Entities;
-using Lykke.AlgoStore.Service.Security.AzureRepositories.Mappers;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Repositories;
 
@@ -10,7 +10,6 @@ namespace Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories
 {
     public class RolePermissionMatchRepository : IRolePermissionMatchRepository
     {
-
         public static readonly string TableName = "RolePermissionMatch";
 
         private readonly INoSQLTableStorage<RolePermissionMatchEntity> _table;
@@ -22,7 +21,8 @@ namespace Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories
 
         public async Task<RolePermissionMatchData> AssignPermissionToRoleAsync(RolePermissionMatchData data)
         {
-            var entity = data.ToEntity();
+            var entity = Mapper.Map<RolePermissionMatchEntity>(data);
+
             await _table.InsertOrReplaceAsync(entity);
 
             return data;
@@ -32,10 +32,10 @@ namespace Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories
         {
             var result = await _table.GetDataAsync(roleId);
 
-            return result.ToModel();
+            return Mapper.Map<List<RolePermissionMatchData>>(result);
         }
 
-        public async Task RevokePermission(RolePermissionMatchData data)
+        public async Task RevokePermissionAsync(RolePermissionMatchData data)
         {
             await _table.DeleteAsync(data.RoleId, data.PermissionId);
         }

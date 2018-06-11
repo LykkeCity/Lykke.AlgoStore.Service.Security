@@ -112,7 +112,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
             await _permissionsRepository.DeletePermissionAsync(permission);
         }
 
-        public async Task RevokePermissionsFromRole(List<RolePermissionMatchData> data)
+        public async Task RevokePermissionsFromRoleAsync(List<RolePermissionMatchData> data)
         {
             foreach (var permission in data)
             {
@@ -127,11 +127,11 @@ namespace Lykke.AlgoStore.Service.Security.Services
                 if (!role.CanBeModified)
                     throw new ValidationException(Phrases.PermissionsAreImmutable);
 
-                await _rolePermissionMatchRepository.RevokePermission(permission);
+                await _rolePermissionMatchRepository.RevokePermissionAsync(permission);
             }
         }
 
-        public async Task<bool> HasPermission(string clientId, string permissionId)
+        public async Task<bool> HasPermissionAsync(string clientId, string permissionId)
         {
             if (string.IsNullOrEmpty(clientId))
                 throw new ValidationException(Phrases.ClientIdEmpty);
@@ -142,6 +142,53 @@ namespace Lykke.AlgoStore.Service.Security.Services
             var userRoles = await _userRolesService.GetRolesByClientIdAsync(clientId);
 
             return userRoles.Any(x => x.Permissions.Any(y => y.Id == permissionId));
+        }
+
+        public async Task SeedPermissionsAsync(List<UserPermissionData> permissions)
+        {
+            // check if we should delete any old permissions
+            var allPermissions = await GetAllPermissionsAsync();
+
+            var permissionsToDelete = allPermissions
+                .Where(x => !permissions.Any(y => y.Name == x.Name && y.Id == x.Id)) //Must compare by Id and Name
+                .ToList();
+
+            if (permissionsToDelete.Any())
+            {
+                var allRoles = await _userRolesService.GetAllRolesAsync();
+
+                // delete old unneeded permissions
+                foreach (var permissionToDelete in permissionsToDelete)
+                {
+                    // first check if the permission has been referenced in any role
+                    var matches = allRoles.Where(role =>
+                            role.Permissions.Any(
+                                p => p.Id == permissionToDelete.Id && p.Name == permissionToDelete.Name))
+                        .ToList();
+
+                    // if the permission is referenced, remove the reference
+                    if (matches.Any())
+                    {
+                        foreach (var reference in matches)
+                        {
+                            await _rolePermissionMatchRepository.RevokePermissionAsync(new RolePermissionMatchData
+                            {
+                                RoleId = reference.Id,
+                                PermissionId = permissionToDelete.Id
+                            });
+                        }
+                    }
+
+                    // finally delete the permission
+                    await DeletePermissionAsync(permissionToDelete.Id);
+                }
+            }
+
+            // refresh current permissions
+            foreach (var permission in permissions)
+            {
+                await SavePermissionAsync(permission);
+            }
         }
     }
 }

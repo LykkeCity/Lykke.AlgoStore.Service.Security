@@ -170,6 +170,32 @@ namespace Lykke.Service.Security.Client.AutorestClient
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
+            /// <param name='permissions'>
+            /// </param>
+            public static bool? SeedPermissions(this ISecurityAPI operations, IList<UserPermissionData> permissions = default(IList<UserPermissionData>))
+            {
+                return operations.SeedPermissionsAsync(permissions).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='permissions'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<bool?> SeedPermissionsAsync(this ISecurityAPI operations, IList<UserPermissionData> permissions = default(IList<UserPermissionData>), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.SeedPermissionsWithHttpMessagesAsync(permissions, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
             public static IList<UserRoleModel> GetAllUserRoles(this ISecurityAPI operations)
             {
                 return operations.GetAllUserRolesAsync().GetAwaiter().GetResult();
@@ -388,6 +414,32 @@ namespace Lykke.Service.Security.Client.AutorestClient
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
+            /// <param name='permissions'>
+            /// </param>
+            public static bool? SeedRoles(this ISecurityAPI operations, IList<UserPermissionData> permissions = default(IList<UserPermissionData>))
+            {
+                return operations.SeedRolesAsync(permissions).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='permissions'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<bool?> SeedRolesAsync(this ISecurityAPI operations, IList<UserPermissionData> permissions = default(IList<UserPermissionData>), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.SeedRolesWithHttpMessagesAsync(permissions, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
             public static IList<AlgoStoreUserData> GetAllUsersWithRoles(this ISecurityAPI operations)
             {
                 return operations.GetAllUsersWithRolesAsync().GetAwaiter().GetResult();
@@ -412,7 +464,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
             /// </param>
             /// <param name='clientId'>
             /// </param>
-            public static IList<AlgoStoreUserData> GetUserByIdWithRoles(this ISecurityAPI operations, string clientId = default(string))
+            public static AlgoStoreUserData GetUserByIdWithRoles(this ISecurityAPI operations, string clientId = default(string))
             {
                 return operations.GetUserByIdWithRolesAsync(clientId).GetAwaiter().GetResult();
             }
@@ -425,7 +477,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<IList<AlgoStoreUserData>> GetUserByIdWithRolesAsync(this ISecurityAPI operations, string clientId = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<AlgoStoreUserData> GetUserByIdWithRolesAsync(this ISecurityAPI operations, string clientId = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.GetUserByIdWithRolesWithHttpMessagesAsync(clientId, null, cancellationToken).ConfigureAwait(false))
                 {

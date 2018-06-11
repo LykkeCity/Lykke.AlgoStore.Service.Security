@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using AzureStorage;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Entities;
-using Lykke.AlgoStore.Service.Security.AzureRepositories.Mappers;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Repositories;
 
@@ -23,18 +23,21 @@ namespace Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories
         public async Task<List<UserPermissionData>> GetAllPermissionsAsync()
         {
             var result = await _table.GetDataAsync();
-            return result.ToModel();
+
+            return Mapper.Map<List<UserPermissionData>>(result);
         }
 
         public async Task<UserPermissionData> GetPermissionByIdAsync(string permissionId)
         {
             var result = await _table.GetDataAsync(permissionId);
-            return result.FirstOrDefault()?.ToModel();
+
+            return Mapper.Map<UserPermissionData>(result.FirstOrDefault());
         }
 
         public async Task<UserPermissionData> SavePermissionAsync(UserPermissionData permission)
         {
-            var entity = permission.ToEntity();
+            var entity = Mapper.Map<UserPermissionEntity>(permission);
+
             await _table.InsertOrReplaceAsync(entity);
 
             return permission;
@@ -42,7 +45,8 @@ namespace Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories
 
         public async Task DeletePermissionAsync(UserPermissionData permission)
         {
-            var entity = permission.ToEntity();
+            var entity = Mapper.Map<UserPermissionEntity>(permission);
+
             await _table.DeleteIfExistAsync(entity.PartitionKey, entity.RowKey);
         }
     }

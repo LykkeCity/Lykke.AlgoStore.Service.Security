@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using AzureStorage;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Entities;
-using Lykke.AlgoStore.Service.Security.AzureRepositories.Mappers;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
 using Lykke.AlgoStore.Service.Security.Core.Repositories;
 
@@ -22,10 +22,11 @@ namespace Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories
         public async Task<List<UserRoleMatchData>> GetAllMatchesAsync()
         {
             var result = await _table.GetDataAsync();
-            return result.ToModel();
+
+            return Mapper.Map<List<UserRoleMatchData>>(result);
         }
 
-        public async Task RevokeUserRole(string clientId, string roleId)
+        public async Task RevokeUserRoleAsync(string clientId, string roleId)
         {
             await _table.DeleteIfExistAsync(clientId, roleId);
         }
@@ -33,18 +34,21 @@ namespace Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories
         public async Task<UserRoleMatchData> GetUserRoleAsync(string clientId, string roleId)
         {
             var result = await _table.GetDataAsync(clientId, roleId);
-            return result?.ToModel();
+
+            return Mapper.Map<UserRoleMatchData>(result);
         }
 
         public async Task<List<UserRoleMatchData>> GetUserRolesAsync(string clientId)
         {
             var result = await _table.GetDataAsync(clientId);
-            return result.ToModel();
+
+            return Mapper.Map<List<UserRoleMatchData>>(result);
         }
 
         public async Task<UserRoleMatchData> SaveUserRoleAsync(UserRoleMatchData data)
         {
-            var entity = data.ToEntity();
+            var entity = Mapper.Map<UserRoleMatchEntity>(data);
+
             await _table.InsertOrReplaceAsync(entity);
 
             return data;

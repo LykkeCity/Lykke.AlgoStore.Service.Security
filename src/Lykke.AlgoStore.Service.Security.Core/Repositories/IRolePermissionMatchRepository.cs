@@ -8,6 +8,6 @@ namespace Lykke.AlgoStore.Service.Security.Core.Repositories
     {
         Task<List<RolePermissionMatchData>> GetPermissionIdsByRoleIdAsync(string roleId);
         Task<RolePermissionMatchData> AssignPermissionToRoleAsync(RolePermissionMatchData data);
-        Task RevokePermission(RolePermissionMatchData data);
+        Task RevokePermissionAsync(RolePermissionMatchData data);
     }
 }

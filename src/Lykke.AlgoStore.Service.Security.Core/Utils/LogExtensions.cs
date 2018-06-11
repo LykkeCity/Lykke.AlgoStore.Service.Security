@@ -5,9 +5,9 @@ using Common.Log;
 
 namespace Lykke.AlgoStore.Service.Security.Core.Utils
 {
-    public static class FuncExtensions
+    public static class LogExtensions
     {
-        public static async Task LogElapsedTime(this Func<Task> action, ILog log, string clientId)
+        public static async Task LogElapsedTimeAsync(this ILog log, string clientId, Func<Task> action)
         {
             if (action == null)
                 return;
@@ -37,7 +37,7 @@ namespace Lykke.AlgoStore.Service.Security.Core.Utils
             }
         }
 
-        public static async Task<T> LogElapsedTime<T>(this Func<Task<T>> action, ILog log, string clientId)
+        public static async Task<T> LogElapsedTimeAsync<T>(this ILog log, string clientId, Func<Task<T>> action)
         {
             if (action == null)
                 return default(T);
