@@ -30,7 +30,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         public async Task<IActionResult> GetAllUsersWithRoles()
         {
             var result =
-                await _log.LogElapsedTime(null, async () => await _userRolesService.GetAllUsersWithRolesAsync());
+                await _log.LogElapsedTimeAsync(null, async () => await _userRolesService.GetAllUsersWithRolesAsync());
 
             return Ok(result);
         }
@@ -44,7 +44,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
                 return BadRequest(ErrorResponse.Create(Phrases.ClientIdEmpty));
 
             var result =
-                await _log.LogElapsedTime(null, async () => await _userRolesService.GeyUserByIdWithRolesAsync(clientId));
+                await _log.LogElapsedTimeAsync(null, async () => await _userRolesService.GeyUserByIdWithRolesAsync(clientId));
 
             return Ok(result);
         }

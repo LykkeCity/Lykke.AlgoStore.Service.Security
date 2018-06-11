@@ -29,7 +29,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         public async Task<IActionResult> GetAllPermissions()
         {
             var result =
-                await _log.LogElapsedTime(null, async () => await _permissionsService.GetAllPermissionsAsync());
+                await _log.LogElapsedTimeAsync(null, async () => await _permissionsService.GetAllPermissionsAsync());
 
             return Ok(result);
         }
@@ -41,7 +41,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         public async Task<IActionResult> GetPermissionById(string permissionId)
         {
             var result = 
-                await _log.LogElapsedTime(null, async () => await _permissionsService.GetPermissionByIdAsync(permissionId));
+                await _log.LogElapsedTimeAsync(null, async () => await _permissionsService.GetPermissionByIdAsync(permissionId));
 
             if (result == null)
                 return NotFound();
@@ -55,7 +55,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         public async Task<IActionResult> GetPermissionsByRoleId(string roleId)
         {
             var result =
-                await _log.LogElapsedTime(null, async () => await _permissionsService.GetPermissionsByRoleIdAsync(roleId));
+                await _log.LogElapsedTimeAsync(null, async () => await _permissionsService.GetPermissionsByRoleIdAsync(roleId));
 
             return Ok(result);
         }
@@ -68,7 +68,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         {
             var data = AutoMapper.Mapper.Map<List<RolePermissionMatchData>>(permissions);
 
-            await _log.LogElapsedTime(null, async () => await _permissionsService.AssignPermissionsToRoleAsync(data));
+            await _log.LogElapsedTimeAsync(null, async () => await _permissionsService.AssignPermissionsToRoleAsync(data));
 
             return NoContent();
         }
@@ -80,7 +80,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         {
             var data = AutoMapper.Mapper.Map<List<RolePermissionMatchData>>(role);
 
-            await _log.LogElapsedTime(null, async () => await _permissionsService.RevokePermissionsFromRoleAsync(data));
+            await _log.LogElapsedTimeAsync(null, async () => await _permissionsService.RevokePermissionsFromRoleAsync(data));
 
             return NoContent();
         }
@@ -91,7 +91,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         public async Task<IActionResult> HasPermission(string clientId, string permissionId)
         {
             var result =
-                await _log.LogElapsedTime(null, async () => await _permissionsService.HasPermissionAsync(clientId, permissionId));
+                await _log.LogElapsedTimeAsync(null, async () => await _permissionsService.HasPermissionAsync(clientId, permissionId));
 
             return Ok(result);
         }
