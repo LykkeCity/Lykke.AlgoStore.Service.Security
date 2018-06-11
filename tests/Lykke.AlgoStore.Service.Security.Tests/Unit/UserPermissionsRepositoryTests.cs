@@ -1,10 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using AutoFixture;
+using AutoMapper;
+using AzureStorage;
 using AzureStorage.Tables;
+using FluentAssertions;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Entities;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
+using Lykke.AlgoStore.Service.Security.Core.Repositories;
 using Lykke.AlgoStore.Service.Security.Tests.Infrastructure;
+using Moq;
 using NUnit.Framework;
 
 namespace Lykke.AlgoStore.Service.Security.Tests.Unit
@@ -12,100 +22,84 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
     [TestFixture]
     public class UserPermissionsRepositoryTests
     {
-        private UserPermissionData _entity;
         private readonly Fixture _fixture = new Fixture();
 
-        private readonly UserPermissionsRepository _repo = new UserPermissionsRepository(
-            AzureTableStorage<UserPermissionEntity>.Create(SettingsMock.GetTableStorageConnectionString(),
-                UserPermissionsRepository.TableName, new LogMock()));
+        private UserPermissionEntity _permissionEntity;
+        private UserPermissionData _permissionData;
+        private IEnumerable<UserPermissionEntity> _permissionEntitites;
+        private IEnumerable<UserPermissionData> _permissionsData;
+
+        private readonly Mock<INoSQLTableStorage<UserPermissionEntity>> _storage =
+            new Mock<INoSQLTableStorage<UserPermissionEntity>>();
+
+        private IUserPermissionsRepository _repository;
 
         [SetUp]
         public void SetUp()
         {
-            _entity = _fixture.Build<UserPermissionData>().With(data => data.Id, "TestPermissionId")
-                .With(data => data.Name, "TestPermission").With(data => data.DisplayName, "Test Permission").Create();
+            //Reset should not be used in production code. It is intended to support testing scenarios only.
+            Mapper.Reset();
+
+            Mapper.Initialize(cfg => cfg.AddProfile<AzureRepositories.AutoMapperProfile>());
+            Mapper.AssertConfigurationIsValid();
+
+            _permissionEntity = _fixture.Build<UserPermissionEntity>().Create();
+            _permissionData = Mapper.Map<UserPermissionData>(_permissionEntity);
+
+            _permissionEntitites = _fixture.Build<UserPermissionEntity>().CreateMany();
+            _permissionsData = Mapper.Map<IEnumerable<UserPermissionData>>(_permissionEntitites);
+
+            _storage.Setup(x => x.InsertOrReplaceAsync(_permissionEntity))
+                .Returns(Task.FromResult(_permissionEntity));
+
+            _storage.Setup(x => x.GetDataAsync(null))
+                .Returns(() =>
+                {
+                    IList<UserPermissionEntity> permissions = new List<UserPermissionEntity>();
+                    ((List<UserPermissionEntity>)permissions).AddRange(_permissionEntitites);
+
+                    return Task.FromResult(permissions);
+                });
+
+            _storage.Setup(x => x.GetDataAsync(It.IsAny<string>(), It.IsAny<Func<UserPermissionEntity, bool>>()))
+                .Returns((string partitionKey, Func<UserPermissionEntity, bool> filter) =>
+                    Task.FromResult(_permissionEntitites));
+
+            _storage.Setup(x => x.DeleteIfExistAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(true));
+
+            _repository = new UserPermissionsRepository(_storage.Object);
         }
 
-        [TearDown]
-        public void CleanUp()
-        {
-            _repo.DeletePermissionAsync(_entity).Wait();
-            _entity = null;
-        }
-
-        [Test, Explicit("Should run manually only. Manipulate data in Table Storage")]
+        [Test]
         public void SavePermissionTest()
         {
-            When_Invoke_SavePermission();
-            Then_Data_ShouldBeSaved();
+            var result = _repository.SavePermissionAsync(_permissionData).Result;
+
+            result.Should().BeEquivalentTo(_permissionData);
         }
 
-        [Test, Explicit("Should run manually only. Manipulate data in Table Storage")]
+        [Test]
         public void GetPermissionByIdTest()
         {
-            var result = When_Invoke_GetPermissionById();
-            Then_Data_ShouldNotBeNull(result);
+            var result = _repository.GetPermissionByIdAsync(_permissionsData.First().Id).Result;
+
+            result.Should().BeEquivalentTo(_permissionsData.First());
         }
 
-        [Test, Explicit("Should run manually only. Manipulate data in Table Storage")]
+        [Test]
         public void GetAllPermissionsTest()
         {
-            When_Invoke_SavePermission();
-            var result = When_Invoke_GetAllPermissions();
-            Then_Result_ShouldNotBe_Null(result);
+            var result = _repository.GetAllPermissionsAsync().Result;
+
+            result.Should().Equal(_permissionsData,
+                (x1, x2) => x1.Id == x2.Id && x1.Name == x2.Name && x1.DisplayName == x2.DisplayName);
         }
 
-        [Test, Explicit("Should run manually only. Manipulate data in Table Storage")]
+        [Test]
         public void DeletePermissionTest()
         {
-            When_Invoke_DeletePermission();
-            Then_Permission_ShouldNotExist();
-        }
-
-        private void Then_Permission_ShouldNotExist()
-        {
-            var result = _repo.GetPermissionByIdAsync(_entity.Id).Result;
-            Assert.IsNull(result);
-        }
-
-        private void When_Invoke_DeletePermission()
-        {
-            _repo.DeletePermissionAsync(_entity).Wait();
-        }
-
-        private static void Then_Data_ShouldNotBeNull(UserPermissionData result)
-        {
-            Assert.NotNull(result);
-        }
-
-        private UserPermissionData When_Invoke_GetPermissionById()
-        {
-            // be sure that the data is here
-            _repo.SavePermissionAsync(_entity).Wait();
-
-            return _repo.GetPermissionByIdAsync(_entity.Id).Result;
-        }
-
-        private List<UserPermissionData> When_Invoke_GetAllPermissions()
-        {
-            return _repo.GetAllPermissionsAsync().Result;
-        }
-
-        private UserPermissionData When_Invoke_SavePermission()
-        {
-            return _repo.SavePermissionAsync(_entity).Result;
-        }
-
-        private void Then_Data_ShouldBeSaved()
-        {
-            var result = _repo.GetPermissionByIdAsync(_entity.Id).Result;
-            Assert.NotNull(result);
-        }
-
-        private static void Then_Result_ShouldNotBe_Null(List<UserPermissionData> data)
-        {
-            Assert.NotNull(data);
-            Assert.NotZero(data.Count);
+            _repository.DeletePermissionAsync(_permissionData).Wait();
         }
     }
 }

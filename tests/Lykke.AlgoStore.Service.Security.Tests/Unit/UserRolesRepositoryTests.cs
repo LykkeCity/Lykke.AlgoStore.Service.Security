@@ -74,11 +74,6 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
             _repository = new UserRolesRepository(_storage.Object);
         }
 
-        [TearDown]
-        public void CleanUp()
-        {
-        }
-
         [Test]
         public void CreateRoleTest()
         {
