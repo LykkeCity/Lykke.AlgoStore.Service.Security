@@ -44,7 +44,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
                 return BadRequest(ErrorResponse.Create(Phrases.ClientIdEmpty));
 
             var result =
-                await _log.LogElapsedTimeAsync(null, async () => await _userRolesService.GeyUserByIdWithRolesAsync(clientId));
+                await _log.LogElapsedTimeAsync(null, async () => await _userRolesService.GetUserByIdWithRolesAsync(clientId));
 
             return Ok(result);
         }

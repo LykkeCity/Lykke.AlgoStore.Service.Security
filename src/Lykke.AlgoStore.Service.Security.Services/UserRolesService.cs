@@ -117,7 +117,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
             return result;
         }
 
-        public async Task<AlgoStoreUserData> GeyUserByIdWithRolesAsync(string clientId)
+        public async Task<AlgoStoreUserData> GetUserByIdWithRolesAsync(string clientId)
         {
             if (string.IsNullOrEmpty(clientId))
                 throw new ValidationException(Phrases.ClientIdEmpty);
