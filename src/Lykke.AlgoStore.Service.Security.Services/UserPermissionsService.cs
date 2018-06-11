@@ -112,7 +112,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
             await _permissionsRepository.DeletePermissionAsync(permission);
         }
 
-        public async Task RevokePermissionsFromRole(List<RolePermissionMatchData> data)
+        public async Task RevokePermissionsFromRoleAsync(List<RolePermissionMatchData> data)
         {
             foreach (var permission in data)
             {
@@ -131,7 +131,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
             }
         }
 
-        public async Task<bool> HasPermission(string clientId, string permissionId)
+        public async Task<bool> HasPermissionAsync(string clientId, string permissionId)
         {
             if (string.IsNullOrEmpty(clientId))
                 throw new ValidationException(Phrases.ClientIdEmpty);
@@ -144,7 +144,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
             return userRoles.Any(x => x.Permissions.Any(y => y.Id == permissionId));
         }
 
-        public async Task SeedPermissions(List<UserPermissionData> permissions)
+        public async Task SeedPermissionsAsync(List<UserPermissionData> permissions)
         {
             // check if we should delete any old permissions
             var allPermissions = await GetAllPermissionsAsync();

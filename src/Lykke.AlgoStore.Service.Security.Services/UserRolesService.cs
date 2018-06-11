@@ -117,7 +117,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
             return result;
         }
 
-        public async Task<AlgoStoreUserData> GeyUserByIdWithRoles(string clientId)
+        public async Task<AlgoStoreUserData> GeyUserByIdWithRolesAsync(string clientId)
         {
             if (string.IsNullOrEmpty(clientId))
                 throw new ValidationException(Phrases.ClientIdEmpty);
@@ -137,7 +137,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
             return data;
         }
 
-        public async Task AssignRoleToUser(UserRoleMatchData data)
+        public async Task AssignRoleToUserAsync(UserRoleMatchData data)
         {
             if (string.IsNullOrEmpty(data.ClientId))
                 throw new ValidationException(Phrases.ClientIdEmpty);
@@ -190,7 +190,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
             return role;
         }
 
-        public async Task RevokeRoleFromUser(UserRoleMatchData data)
+        public async Task RevokeRoleFromUserAsync(UserRoleMatchData data)
         {
             if (string.IsNullOrEmpty(data.RoleId))
                 throw new ValidationException(Phrases.RoleIdEmpty);
@@ -201,7 +201,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
             await _userRoleMatchRepository.RevokeUserRoleAsync(data.ClientId, data.RoleId);
         }
 
-        public async Task VerifyUserRole(string clientId)
+        public async Task VerifyUserRoleAsync(string clientId)
         {
             if (string.IsNullOrEmpty(clientId))
                 throw new ValidationException(Phrases.ClientIdEmpty);
@@ -268,7 +268,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
             await _rolesRepository.DeleteRoleAsync(role);
         }
 
-        public async Task SeedRoles(List<UserPermissionData> permissions)
+        public async Task SeedRolesAsync(List<UserPermissionData> permissions)
         {
             var allRoles = await GetAllRolesAsync();
 

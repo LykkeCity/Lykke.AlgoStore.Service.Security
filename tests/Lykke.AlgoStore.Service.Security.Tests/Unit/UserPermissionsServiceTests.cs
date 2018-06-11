@@ -91,7 +91,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
 
         private bool When_Invoke_HasPermission(string clientId, string permissionId)
         {
-            return _userPermissionsService.HasPermission(clientId, permissionId).Result;
+            return _userPermissionsService.HasPermissionAsync(clientId, permissionId).Result;
         }
 
         private List<UserPermissionData> When_Invoke_GetPermissionsByRoleId()

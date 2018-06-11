@@ -80,7 +80,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         {
             var data = AutoMapper.Mapper.Map<List<RolePermissionMatchData>>(role);
 
-            await _log.LogElapsedTime(null, async () => await _permissionsService.RevokePermissionsFromRole(data));
+            await _log.LogElapsedTime(null, async () => await _permissionsService.RevokePermissionsFromRoleAsync(data));
 
             return NoContent();
         }
@@ -91,7 +91,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         public async Task<IActionResult> HasPermission(string clientId, string permissionId)
         {
             var result =
-                await _log.LogElapsedTime(null, async () => await _permissionsService.HasPermission(clientId, permissionId));
+                await _log.LogElapsedTime(null, async () => await _permissionsService.HasPermissionAsync(clientId, permissionId));
 
             return Ok(result);
         }
@@ -101,7 +101,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
         [ProducesResponseType(typeof(bool), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> SeedPermissions([FromBody] List<UserPermissionData> permissions)
         {
-            await _permissionsService.SeedPermissions(permissions);
+            await _permissionsService.SeedPermissionsAsync(permissions);
 
             return Ok();
         }

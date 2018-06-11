@@ -51,7 +51,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
                 RoleId = _roleId,
                 ClientId = _clientId
             };
-            _service.AssignRoleToUser(roleMatchData).Wait();
+            _service.AssignRoleToUserAsync(roleMatchData).Wait();
         }
 
         private List<UserRoleData> When_Invoke_GetByClientId()
