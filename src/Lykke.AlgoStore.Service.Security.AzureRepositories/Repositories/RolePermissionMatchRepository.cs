@@ -35,7 +35,7 @@ namespace Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories
             return Mapper.Map<List<RolePermissionMatchData>>(result);
         }
 
-        public async Task RevokePermission(RolePermissionMatchData data)
+        public async Task RevokePermissionAsync(RolePermissionMatchData data)
         {
             await _table.DeleteAsync(data.RoleId, data.PermissionId);
         }

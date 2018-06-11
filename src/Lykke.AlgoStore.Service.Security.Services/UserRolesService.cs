@@ -198,7 +198,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
             if (string.IsNullOrEmpty(data.ClientId))
                 throw new ValidationException(Phrases.ClientIdEmpty);
 
-            await _userRoleMatchRepository.RevokeUserRole(data.ClientId, data.RoleId);
+            await _userRoleMatchRepository.RevokeUserRoleAsync(data.ClientId, data.RoleId);
         }
 
         public async Task VerifyUserRole(string clientId)
@@ -246,7 +246,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
             foreach (var permissionForRole in permissionsForRole)
             {
                 // if it does, delete them
-                await _rolePermissionMatchRepository.RevokePermission(permissionForRole);
+                await _rolePermissionMatchRepository.RevokePermissionAsync(permissionForRole);
             }
 
             //then check if any user is assigned to this role
@@ -258,7 +258,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
                 // it there are any, revoke it
                 foreach (var match in usersWithRole)
                 {
-                    await _userRoleMatchRepository.RevokeUserRole(match.ClientId, match.RoleId);
+                    await _userRoleMatchRepository.RevokeUserRoleAsync(match.ClientId, match.RoleId);
                 }
             }
 

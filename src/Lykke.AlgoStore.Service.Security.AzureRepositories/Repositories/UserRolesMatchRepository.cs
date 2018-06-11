@@ -26,7 +26,7 @@ namespace Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories
             return Mapper.Map<List<UserRoleMatchData>>(result);
         }
 
-        public async Task RevokeUserRole(string clientId, string roleId)
+        public async Task RevokeUserRoleAsync(string clientId, string roleId)
         {
             await _table.DeleteIfExistAsync(clientId, roleId);
         }

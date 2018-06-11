@@ -147,7 +147,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
             result.Setup(repo => repo.SaveUserRoleAsync(It.IsAny<UserRoleMatchData>()))
                 .Returns((UserRoleMatchData data) => Task.FromResult(data));
 
-            result.Setup(repo => repo.RevokeUserRole(It.IsAny<string>(), It.IsAny<string>()))
+            result.Setup(repo => repo.RevokeUserRoleAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(() => Task.CompletedTask);
 
             return result.Object;
@@ -167,7 +167,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
             result.Setup(repo => repo.AssignPermissionToRoleAsync(It.IsAny<RolePermissionMatchData>()))
                 .Returns((RolePermissionMatchData data) => Task.FromResult(data));
 
-            result.Setup(repo => repo.RevokePermission(It.IsAny<RolePermissionMatchData>()))
+            result.Setup(repo => repo.RevokePermissionAsync(It.IsAny<RolePermissionMatchData>()))
                 .Returns(() => Task.CompletedTask);
 
             return result.Object;

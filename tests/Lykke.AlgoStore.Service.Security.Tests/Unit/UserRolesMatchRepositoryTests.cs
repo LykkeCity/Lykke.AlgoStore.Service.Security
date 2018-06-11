@@ -105,7 +105,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
         [Test]
         public void RevokeUserRoleTest()
         {
-            _repository.RevokeUserRole(_roleMatchesData.First().ClientId, _roleMatchesData.First().RoleId).Wait();
+            _repository.RevokeUserRoleAsync(_roleMatchesData.First().ClientId, _roleMatchesData.First().RoleId).Wait();
         }
     }
 }

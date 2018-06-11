@@ -77,7 +77,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
         [Test]
         public void RevokePermissionFromRoleTest()
         {
-            _repository.RevokePermission(_rolePermissionMatchData).Wait();
+            _repository.RevokePermissionAsync(_rolePermissionMatchData).Wait();
         }
     }
 }

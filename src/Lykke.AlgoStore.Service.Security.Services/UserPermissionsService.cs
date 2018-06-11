@@ -128,7 +128,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
                 if (!role.CanBeModified)
                     throw new ValidationException(Phrases.PermissionsAreImmutable);
 
-                await _rolePermissionMatchRepository.RevokePermission(permission);
+                await _rolePermissionMatchRepository.RevokePermissionAsync(permission);
             }
         }
 
@@ -172,7 +172,7 @@ namespace Lykke.AlgoStore.Service.Security.Services
                     {
                         foreach (var reference in matches)
                         {
-                            await _rolePermissionMatchRepository.RevokePermission(new RolePermissionMatchData()
+                            await _rolePermissionMatchRepository.RevokePermissionAsync(new RolePermissionMatchData()
                             {
                                 RoleId = reference.Id,
                                 PermissionId = permissionToDelete.Id
