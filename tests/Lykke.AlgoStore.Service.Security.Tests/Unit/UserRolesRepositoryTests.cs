@@ -87,10 +87,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
         {
             var result = _repository.GetAllRolesAsync().Result;
 
-            //REMARK: For some reason must exclude permissions property from comparison 
-            result.Should().Equal(_rolesData,
-                (x1, x2) => x1.CanBeDeleted == x2.CanBeDeleted && x1.CanBeModified == x2.CanBeModified &&
-                            x1.Id == x2.Id && x1.Name == x2.Name);
+            result.Should().BeEquivalentTo(_rolesData);
         }
 
         [Test]

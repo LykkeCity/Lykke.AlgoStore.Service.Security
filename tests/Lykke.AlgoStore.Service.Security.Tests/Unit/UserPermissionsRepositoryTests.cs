@@ -88,8 +88,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
         {
             var result = _repository.GetAllPermissionsAsync().Result;
 
-            result.Should().Equal(_permissionsData,
-                (x1, x2) => x1.Id == x2.Id && x1.Name == x2.Name && x1.DisplayName == x2.DisplayName);
+            result.Should().BeEquivalentTo(_permissionsData);
         }
 
         [Test]
