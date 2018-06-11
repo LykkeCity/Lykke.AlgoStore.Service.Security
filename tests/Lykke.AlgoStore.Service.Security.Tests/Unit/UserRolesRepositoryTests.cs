@@ -9,6 +9,7 @@ using FluentAssertions;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Entities;
 using Lykke.AlgoStore.Service.Security.AzureRepositories.Repositories;
 using Lykke.AlgoStore.Service.Security.Core.Domain;
+using Lykke.AlgoStore.Service.Security.Core.Repositories;
 using Moq;
 using NUnit.Framework;
 
@@ -21,6 +22,8 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
 
         private readonly Mock<INoSQLTableStorage<UserRoleEntity>> _storage =
             new Mock<INoSQLTableStorage<UserRoleEntity>>();
+
+        private IUserRolesRepository _repository;
 
         private UserRoleEntity _roleEntity;
         private UserRoleData _roleData;
@@ -41,6 +44,34 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
 
             _roleEntities = _fixture.Build<UserRoleEntity>().CreateMany();
             _rolesData = Mapper.Map<List<UserRoleData>>(_roleEntities);
+
+            _storage.Setup(x => x.InsertOrReplaceAsync(_roleEntity))
+                .Returns(Task.FromResult(_roleEntity));
+
+            _storage.Setup(x => x.GetDataAsync(null))
+                .Returns(() =>
+                {
+                    IList<UserRoleEntity> roles = new List<UserRoleEntity>();
+                    ((List<UserRoleEntity>)roles).AddRange(_roleEntities);
+
+                    return Task.FromResult(roles);
+                });
+
+            _storage.Setup(x => x.GetDataAsync(It.IsAny<string>(), It.IsAny<Func<UserRoleEntity, bool>>()))
+                .Returns((string partitionKey, Func<UserRoleEntity, bool> filter) => Task.FromResult(_roleEntities));
+
+            _storage.Setup(x => x.DeleteIfExistAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(true));
+
+            _storage.Setup(x => x.GetDataAsync(It.IsAny<Func<UserRoleEntity, bool>>()))
+                .Returns((Func<UserRoleEntity, bool> filter) => {
+                    IList<UserRoleEntity> roles = new List<UserRoleEntity>();
+                    ((List<UserRoleEntity>)roles).AddRange(_roleEntities);
+
+                    return Task.FromResult(roles);
+                });
+
+            _repository = new UserRolesRepository(_storage.Object);
         }
 
         [TearDown]
@@ -51,12 +82,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
         [Test]
         public void CreateRoleTest()
         {
-            _storage.Setup(x => x.InsertOrReplaceAsync(_roleEntity))
-                .Returns(Task.FromResult(_roleEntity));
-
-            var repo = new UserRolesRepository(_storage.Object);
-
-            var result = repo.SaveRoleAsync(_roleData).Result;
+            var result = _repository.SaveRoleAsync(_roleData).Result;
 
             result.Should().BeEquivalentTo(_roleData);
         }
@@ -64,18 +90,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
         [Test]
         public void GetAllRolesTest()
         {
-            _storage.Setup(x => x.GetDataAsync(null))
-                .Returns(() =>
-                {
-                    IList<UserRoleEntity> roles = new List<UserRoleEntity>();
-                    ((List<UserRoleEntity>) roles).AddRange(_roleEntities);
-
-                    return Task.FromResult(roles);
-                });
-
-            var repo = new UserRolesRepository(_storage.Object);
-
-            var result = repo.GetAllRolesAsync().Result;
+            var result = _repository.GetAllRolesAsync().Result;
 
             //REMARK: For some reason must exclude permissions property from comparison 
             result.Should().Equal(_rolesData,
@@ -86,12 +101,7 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
         [Test]
         public void GetByIdTest()
         {
-            _storage.Setup(x => x.GetDataAsync(It.IsAny<string>(), It.IsAny<Func<UserRoleEntity, bool>>()))
-                .Returns((string partitionKey, Func<UserRoleEntity, bool> filter) => Task.FromResult(_roleEntities));
-
-            var repo = new UserRolesRepository(_storage.Object);
-
-            var result = repo.GetRoleByIdAsync(_rolesData.First().Id).Result;
+            var result = _repository.GetRoleByIdAsync(_rolesData.First().Id).Result;
 
             result.Should().BeEquivalentTo(_rolesData.First());
         }
@@ -99,28 +109,13 @@ namespace Lykke.AlgoStore.Service.Security.Tests.Unit
         [Test]
         public void DeleteRoleTest()
         {
-            _storage.Setup(x => x.DeleteIfExistAsync(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(true));
-
-            var repo = new UserRolesRepository(_storage.Object);
-
-            repo.DeleteRoleAsync(_roleData).Wait();
+            _repository.DeleteRoleAsync(_roleData).Wait();
         }
 
         [Test]
         public void RoleExistsTest()
         {
-            _storage.Setup(x => x.GetDataAsync(It.IsAny<Func<UserRoleEntity, bool>>()))
-                .Returns((Func<UserRoleEntity, bool> filter) => {
-                    IList<UserRoleEntity> roles = new List<UserRoleEntity>();
-                    ((List<UserRoleEntity>)roles).AddRange(_roleEntities);
-
-                    return Task.FromResult(roles);
-                });
-
-            var repo = new UserRolesRepository(_storage.Object);
-
-            var result = repo.RoleExistsAsync(_roleData.Id).Result;
+            var result = _repository.RoleExistsAsync(_roleData.Id).Result;
 
             Assert.IsTrue(result);
         }
