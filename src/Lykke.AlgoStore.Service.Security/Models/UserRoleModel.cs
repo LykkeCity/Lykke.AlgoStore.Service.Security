@@ -6,6 +6,7 @@ namespace Lykke.AlgoStore.Service.Security.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public List<UserPermissionModel> Permissions { get; set; }
+        public bool CanBeDeleted { get; set; }
+        public bool CanBeModified { get; set; }
     }
 }
