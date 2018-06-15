@@ -8,6 +8,9 @@ namespace Lykke.AlgoStore.Service.Security
     {
         public AutoMapperProfile()
         {
+            CreateMap<UserRoleModel, UserRoleData>()
+                .ForMember(dest => dest.Permissions, opt => opt.Ignore());
+
             CreateMap<UserRoleUpdateModel, UserRoleData>()
                 .ForMember(dest => dest.Permissions, opt => opt.Ignore());
         }
