@@ -11,21 +11,21 @@ namespace Lykke.AlgoStore.Service.Security.Client
         /// Get all permissions
         /// </summary>
         /// <returns>All permissions</returns>
-        Task<IEnumerable<UserPermissionModel>> GetAllPermissionsAsync();
+        Task<IEnumerable<UserPermissionData>> GetAllPermissionsAsync();
 
         /// <summary>
         /// Get permission by id
         /// </summary>
         /// <param name="permissionId">Permission Id</param>
         /// <returns>User permission or NULL otherwise</returns>
-        Task<UserPermissionModel> GetPermissionByIdAsync(string permissionId);
+        Task<UserPermissionData> GetPermissionByIdAsync(string permissionId);
 
         /// <summary>
         /// Get permissions based on role id
         /// </summary>
         /// <param name="roleId">Role Id</param>
         /// <returns>Permissions found for provided role id</returns>
-        Task<IEnumerable<UserPermissionModel>> GetPermissionsByRoleIdAsync(string roleId);
+        Task<IEnumerable<UserPermissionData>> GetPermissionsByRoleIdAsync(string roleId);
 
         /// <summary>
         /// Assign multiple permission for provided role
@@ -53,35 +53,35 @@ namespace Lykke.AlgoStore.Service.Security.Client
         /// Get all roles
         /// </summary>
         /// <returns>All roles</returns>
-        Task<IEnumerable<UserRoleModel>> GetAllUserRolesAsync();
+        Task<IEnumerable<UserRoleData>> GetAllUserRolesAsync();
 
         /// <summary>
         /// Get role by Id
         /// </summary>
         /// <param name="roleId">Role Id</param>
         /// <returns>Found role or NULL otherwise</returns>
-        Task<UserRoleModel> GetRoleByIdAsync(string roleId);
+        Task<UserRoleData> GetRoleByIdAsync(string roleId);
 
         /// <summary>
         /// Get client roles
         /// </summary>
         /// <param name="clientId">Client Id</param>
         /// <returns>Client roles</returns>
-        Task<IEnumerable<UserRoleModel>> GetRolesByClientIdAsync(string clientId);
+        Task<IEnumerable<UserRoleData>> GetRolesByClientIdAsync(string clientId);
 
         /// <summary>
         /// Save user role
         /// </summary>
         /// <param name="role">user role to save</param>
         /// <returns>User role</returns>
-        Task<UserRoleModel> SaveUserRoleAsync(UserRoleModel role);
+        Task<UserRoleData> SaveUserRoleAsync(UserRoleModel role);
 
         /// <summary>
         /// Update user role
         /// </summary>
         /// <param name="role">User role to update</param>
         /// <returns>User role</returns>
-        Task<UserRoleModel> UpdateUserRoleAsync(UserRoleUpdateModel role);
+        Task<UserRoleData> UpdateUserRoleAsync(UserRoleUpdateModel role);
 
         /// <summary>
         /// Assign specific role to user
