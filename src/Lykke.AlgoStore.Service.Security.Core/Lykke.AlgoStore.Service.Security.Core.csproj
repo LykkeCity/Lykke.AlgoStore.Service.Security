@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>Lykke.AlgoStore.Service.Security.Core</AssemblyName>
+    <RootNamespace>Lykke.AlgoStore.Service.Security.Core</RootNamespace>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Repositories\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lykke.Common" Version="6.8.2" />
+    <PackageReference Include="Lykke.Service.PersonalData" Version="1.0.75" />
+  </ItemGroup>
+
+</Project>
