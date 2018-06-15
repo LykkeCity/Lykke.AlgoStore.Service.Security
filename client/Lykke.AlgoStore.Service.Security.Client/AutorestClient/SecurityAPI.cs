@@ -1382,6 +1382,10 @@ namespace Lykke.Service.Security.Client.AutorestClient
         /// </return>
         public async Task<HttpOperationResponse<UserRoleData>> SaveUserRoleWithHttpMessagesAsync(UserRoleModel role = default(UserRoleModel), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (role != null)
+            {
+                role.Validate();
+            }
             // Tracing
             bool _shouldTrace = ServiceClientTracing.IsEnabled;
             string _invocationId = null;
