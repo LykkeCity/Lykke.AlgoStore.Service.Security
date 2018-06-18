@@ -8,5 +8,6 @@ namespace Lykke.AlgoStore.Service.Security.Models
         public string Name { get; set; }
         public bool CanBeDeleted { get; set; }
         public bool CanBeModified { get; set; }
+        public List<UserPermissionModel> Permissions { get; set; }
     }
 }
