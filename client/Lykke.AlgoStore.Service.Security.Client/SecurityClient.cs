@@ -19,17 +19,17 @@ namespace Lykke.AlgoStore.Service.Security.Client
             _service = new SecurityAPI(new Uri(serviceUrl), new HttpClient());
         }
 
-        public async Task<IEnumerable<UserPermissionModel>> GetAllPermissionsAsync()
+        public async Task<IEnumerable<UserPermissionData>> GetAllPermissionsAsync()
         {
             return await _service.GetAllPermissionsAsync();
         }
 
-        public async Task<UserPermissionModel> GetPermissionByIdAsync(string permissionId)
+        public async Task<UserPermissionData> GetPermissionByIdAsync(string permissionId)
         {
             return await _service.GetPermissionByIdAsync(permissionId);
         }
 
-        public async Task<IEnumerable<UserPermissionModel>> GetPermissionsByRoleIdAsync(string roleId)
+        public async Task<IEnumerable<UserPermissionData>> GetPermissionsByRoleIdAsync(string roleId)
         {
             return await _service.GetPermissionsByRoleIdAsync(roleId);
         }
@@ -51,27 +51,27 @@ namespace Lykke.AlgoStore.Service.Security.Client
             return result.HasValue && result.Value;
         }
 
-        public async Task<IEnumerable<UserRoleModel>> GetAllUserRolesAsync()
+        public async Task<IEnumerable<UserRoleData>> GetAllUserRolesAsync()
         {
             return await _service.GetAllUserRolesAsync();
         }
 
-        public async Task<UserRoleModel> GetRoleByIdAsync(string roleId)
+        public async Task<UserRoleData> GetRoleByIdAsync(string roleId)
         {
             return await _service.GetRoleByIdAsync(roleId);
         }
 
-        public async Task<IEnumerable<UserRoleModel>> GetRolesByClientIdAsync(string clientId)
+        public async Task<IEnumerable<UserRoleData>> GetRolesByClientIdAsync(string clientId)
         {
             return await _service.GetRolesByClientIdAsync(clientId);
         }
 
-        public async Task<UserRoleModel> SaveUserRoleAsync(UserRoleModel role)
+        public async Task<UserRoleData> SaveUserRoleAsync(UserRoleModel role)
         {
             return await _service.SaveUserRoleAsync(role);
         }
 
-        public async Task<UserRoleModel> UpdateUserRoleAsync(UserRoleUpdateModel role)
+        public async Task<UserRoleData> UpdateUserRoleAsync(UserRoleUpdateModel role)
         {
             return await _service.UpdateUserRoleAsync(role);
         }

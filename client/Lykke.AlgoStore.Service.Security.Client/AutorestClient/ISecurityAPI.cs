@@ -40,7 +40,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        Task<HttpOperationResponse<IList<UserPermissionModel>>> GetAllPermissionsWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<IList<UserPermissionData>>> GetAllPermissionsWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='permissionId'>
         /// </param>
@@ -50,7 +50,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        Task<HttpOperationResponse<UserPermissionModel>> GetPermissionByIdWithHttpMessagesAsync(string permissionId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<UserPermissionData>> GetPermissionByIdWithHttpMessagesAsync(string permissionId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='roleId'>
         /// </param>
@@ -60,7 +60,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        Task<HttpOperationResponse<IList<UserPermissionModel>>> GetPermissionsByRoleIdWithHttpMessagesAsync(string roleId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<IList<UserPermissionData>>> GetPermissionsByRoleIdWithHttpMessagesAsync(string roleId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='permissions'>
         /// </param>
@@ -110,7 +110,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        Task<HttpOperationResponse<IList<UserRoleModel>>> GetAllUserRolesWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<IList<UserRoleData>>> GetAllUserRolesWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='roleId'>
         /// </param>
@@ -120,7 +120,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        Task<HttpOperationResponse<UserRoleModel>> GetRoleByIdWithHttpMessagesAsync(string roleId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<UserRoleData>> GetRoleByIdWithHttpMessagesAsync(string roleId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='clientId'>
         /// </param>
@@ -130,7 +130,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        Task<HttpOperationResponse<IList<UserRoleModel>>> GetRolesByClientIdWithHttpMessagesAsync(string clientId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<IList<UserRoleData>>> GetRolesByClientIdWithHttpMessagesAsync(string clientId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='role'>
         /// </param>
@@ -140,7 +140,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        Task<HttpOperationResponse<UserRoleModel>> SaveUserRoleWithHttpMessagesAsync(UserRoleModel role = default(UserRoleModel), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<UserRoleData>> SaveUserRoleWithHttpMessagesAsync(UserRoleModel role = default(UserRoleModel), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='role'>
         /// </param>
@@ -150,7 +150,7 @@ namespace Lykke.Service.Security.Client.AutorestClient
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        Task<HttpOperationResponse<UserRoleModel>> UpdateUserRoleWithHttpMessagesAsync(UserRoleUpdateModel role = default(UserRoleUpdateModel), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<UserRoleData>> UpdateUserRoleWithHttpMessagesAsync(UserRoleUpdateModel role = default(UserRoleUpdateModel), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <param name='role'>
         /// </param>

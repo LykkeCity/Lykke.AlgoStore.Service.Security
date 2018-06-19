@@ -24,10 +24,12 @@ namespace Lykke.Service.Security.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the UserRoleModel class.
         /// </summary>
-        public UserRoleModel(string id = default(string), string name = default(string), IList<UserPermissionModel> permissions = default(IList<UserPermissionModel>))
+        public UserRoleModel(bool canBeDeleted, bool canBeModified, string id = default(string), string name = default(string), IList<UserPermissionModel> permissions = default(IList<UserPermissionModel>))
         {
             Id = id;
             Name = name;
+            CanBeDeleted = canBeDeleted;
+            CanBeModified = canBeModified;
             Permissions = permissions;
             CustomInit();
         }
@@ -49,8 +51,27 @@ namespace Lykke.Service.Security.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
+        [JsonProperty(PropertyName = "CanBeDeleted")]
+        public bool CanBeDeleted { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "CanBeModified")]
+        public bool CanBeModified { get; set; }
+
+        /// <summary>
+        /// </summary>
         [JsonProperty(PropertyName = "Permissions")]
         public IList<UserPermissionModel> Permissions { get; set; }
 
+        /// <summary>
+        /// Validate the object.
+        /// </summary>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown if validation fails
+        /// </exception>
+        public virtual void Validate()
+        {
+        }
     }
 }

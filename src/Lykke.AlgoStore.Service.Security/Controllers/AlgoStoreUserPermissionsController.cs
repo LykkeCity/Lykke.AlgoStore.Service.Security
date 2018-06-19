@@ -25,7 +25,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
 
         [HttpGet("getAll")]
         [SwaggerOperation("GetAllPermissions")]
-        [ProducesResponseType(typeof(List<UserPermissionModel>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<UserPermissionData>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetAllPermissions()
         {
             var result =
@@ -36,7 +36,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
 
         [HttpGet("getById")]
         [SwaggerOperation("GetPermissionById")]
-        [ProducesResponseType(typeof(UserPermissionModel), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UserPermissionData), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetPermissionById(string permissionId)
         {
@@ -51,7 +51,7 @@ namespace Lykke.AlgoStore.Service.Security.Controllers
 
         [HttpGet("getByRoleId")]
         [SwaggerOperation("GetPermissionsByRoleId")]
-        [ProducesResponseType(typeof(List<UserPermissionModel>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<UserPermissionData>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetPermissionsByRoleId(string roleId)
         {
             var result =
