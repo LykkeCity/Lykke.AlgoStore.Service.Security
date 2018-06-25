@@ -22,11 +22,12 @@ namespace Lykke.Service.Security.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the UserPermissionData class.
         /// </summary>
-        public UserPermissionData(string id = default(string), string name = default(string), string displayName = default(string))
+        public UserPermissionData(string id = default(string), string name = default(string), string displayName = default(string), string description = default(string))
         {
             Id = id;
             Name = name;
             DisplayName = displayName;
+            Description = description;
             CustomInit();
         }
 
@@ -49,6 +50,11 @@ namespace Lykke.Service.Security.Client.AutorestClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "DisplayName")]
         public string DisplayName { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "Description")]
+        public string Description { get; set; }
 
     }
 }
