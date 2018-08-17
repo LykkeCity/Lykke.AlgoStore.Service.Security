@@ -16,5 +16,10 @@ namespace Lykke.AlgoStore.Service.Security.Client
 
             builder.RegisterInstance(new SecurityClient(serviceUrl, log)).As<ISecurityClient>().SingleInstance();
         }
+
+        public static void RegisterSecurityClient(this ContainerBuilder builder, SecurityServiceClientSettings settings, ILog log)
+        {
+            builder.RegisterSecurityClient(settings?.ServiceUrl, log);
+        }
     }
 }
