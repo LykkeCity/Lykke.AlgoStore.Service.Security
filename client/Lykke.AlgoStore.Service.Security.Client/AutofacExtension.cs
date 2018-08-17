@@ -14,15 +14,7 @@ namespace Lykke.AlgoStore.Service.Security.Client
             if (string.IsNullOrWhiteSpace(serviceUrl))
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(serviceUrl));
 
-            builder.RegisterType<SecurityClient>()
-                .WithParameter("serviceUrl", serviceUrl)
-                .As<ISecurityClient>()
-                .SingleInstance();
-        }
-
-        public static void RegisterSecurityClient(this ContainerBuilder builder, SecurityServiceClientSettings settings, ILog log)
-        {
-            builder.RegisterSecurityClient(settings?.ServiceUrl, log);
+            builder.RegisterInstance(new SecurityClient(serviceUrl, log)).As<ISecurityClient>().SingleInstance();
         }
     }
 }
